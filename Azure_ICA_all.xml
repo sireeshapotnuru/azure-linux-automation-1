@@ -3585,6 +3585,63 @@
 					</VirtualMachine>					
 				</HostedService>
 			</M1S1>
+			<S1C3>
+				<isDeployed>NO</isDeployed>
+				<HostedService>
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>server-vm</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1110</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>client-vm-1</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1111</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>client-vm-2</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1112</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>client-vm-3</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1113</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>		
+				</HostedService>
+			</S1C3>						
 			<S1C15>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -7336,23 +7393,23 @@
 			<testName>ICA-RDMA-TEST-MultiVM</testName>
 			<testScript></testScript>
 			<testScriptps1>ICA-RDMA-TEST-MultiVM.ps1</testScriptps1>
-			<setupType>S1C15</setupType>
+			<setupType>S1C3</setupType>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
 			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
 			<remoteFiles></remoteFiles>
 			<InitialWaitSeconds>60</InitialWaitSeconds>
 			<Priority>P0</Priority>
-			<NumberOfReboots>5</NumberOfReboots>
+			<NumberOfReboots>1</NumberOfReboots>
 			<params>
 				<param>mpi_settings="-env I_MPI_FABRICS dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
 				<param>imb_mpi1_tests="pingpong allreduce"</param>
-				<param>mpi1_ppn=2</param>
-				<param>imb_mpi1_tests_iterations=10</param>
+				<param>mpi1_ppn=3</param>
+				<param>imb_mpi1_tests_iterations=2000</param>
 				<param>imb_rma_tests="all"</param>
-				<param>rma_ppn=2</param>
+				<param>rma_ppn=3</param>
 				<param>imb_rma_tests_iterations=1</param>
 				<param>imb_nbc_tests="all"</param>
-				<param>nbc_ppn=2</param>
+				<param>nbc_ppn=3</param>
 				<param>imb_nbc_tests_iterations=1</param>
 			</params>			
 		</test>

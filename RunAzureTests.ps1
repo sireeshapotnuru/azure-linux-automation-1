@@ -36,10 +36,7 @@
 
 [string] $tipSessionId="",
 [string] $tipCluster="",
-<<<<<<< HEAD
-=======
 [switch] $UseManagedDisks,
->>>>>>> 352a59e2243707fb6586fc0b3922b7e00fd3583d
 
 [switch] $ExitWithZero
 )
