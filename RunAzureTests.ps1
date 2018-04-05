@@ -19,6 +19,7 @@
 [string] $customLIS,
 [string] $customLISBranch,
 [switch] $ForceDeleteResources,
+[switch] $keepReproInact,
 [string] $customSecretsFilePath = "",
 [string] $ArchiveLogDirectory = "",
 [string] $ResultDBTable = "",
@@ -35,6 +36,10 @@
 
 [string] $tipSessionId="",
 [string] $tipCluster="",
+<<<<<<< HEAD
+=======
+[switch] $UseManagedDisks,
+>>>>>>> 352a59e2243707fb6586fc0b3922b7e00fd3583d
 
 [switch] $ExitWithZero
 )
@@ -42,7 +47,7 @@
 #---------------------------------------------------------[Initializations]--------------------------------------------------------
 
 Write-Host "-----------$PWD---------"
-$maxDirLength = 32
+$maxDirLength = 64
 if ( $pwd.Path.Length -gt $maxDirLength)
 {
     $shortRandomNumber = Get-Random -Maximum 999999 -Minimum 111111
@@ -306,7 +311,6 @@ if ( $ForceDeleteResources )
 {
     $cmd += " -ForceDeleteResources"
 }
-
 if ( $keepReproInact )
 {
     $cmd += " -keepReproInact"
@@ -333,15 +337,15 @@ if ( $testIterations -gt 1 )
 }
 if ( $tipSessionId)
 {
-    cmd += " -tipSessionId $tipSessionId"
+    $cmd += " -tipSessionId $tipSessionId"
 }
 if ( $tipCluster)
 {
-    cmd += " -tipCluster $tipCluster"
+    $cmd += " -tipCluster $tipCluster"
 }
 if ($UseManagedDisks)
 {
-    cmd += " -UseManagedDisks"
+    $cmd += " -UseManagedDisks"
 }
 $cmd += " -ImageType Standard"
 $cmd += " -UseAzureResourceManager"
