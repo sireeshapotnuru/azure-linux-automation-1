@@ -3585,7 +3585,7 @@
 					</VirtualMachine>					
 				</HostedService>
 			</M1S1>
-			<S1C3>
+			<S1C1>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
 					<VirtualMachine>
@@ -3613,35 +3613,9 @@
 							<PublicPort>1111</PublicPort>
 						</EndPoints>
 						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-2</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1112</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-3</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1113</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>		
+					</VirtualMachine>												
 				</HostedService>
-			</S1C3>						
+			</S1C1>						
 			<S1C15>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -7393,7 +7367,7 @@
 			<testName>ICA-RDMA-TEST-MultiVM</testName>
 			<testScript></testScript>
 			<testScriptps1>ICA-RDMA-TEST-MultiVM.ps1</testScriptps1>
-			<setupType>S1C3</setupType>
+			<setupType>S1C1</setupType>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
 			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
 			<remoteFiles></remoteFiles>
