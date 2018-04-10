@@ -3565,7 +3565,7 @@
 						<EndPoints>
 							<Name>SSH</Name>
 							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
+							<LocalPort>333</LocalPort>
 							<PublicPort>1111</PublicPort>
 						</EndPoints>
 						<DataDisk></DataDisk>
@@ -3578,7 +3578,7 @@
 						<EndPoints>
 							<Name>SSH</Name>
 							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
+							<LocalPort>333</LocalPort>
 							<PublicPort>1112</PublicPort>
 						</EndPoints>
 						<DataDisk></DataDisk>
