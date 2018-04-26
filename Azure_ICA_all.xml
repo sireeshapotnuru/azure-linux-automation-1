@@ -3797,7 +3797,7 @@
 						<DataDisk></DataDisk>
 					</VirtualMachine>
 				</HostedService>					
-			</S1C15>						
+			</S1C15>
 			<RDMA2VMA8>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -4218,7 +4218,7 @@
 						<DataDisk></DataDisk>
 					</VirtualMachine>					
 				</HostedService>
-			</M1S15>						
+			</M1S15>
 			<M1D1S1>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -4569,7 +4569,7 @@
 						<DataDisk></DataDisk>
 					</VirtualMachine>
 				</HostedService>
-			</S1C1LBIPv4>			
+			</S1C1LBIPv4>
 			<!-- IPv6 Enabled Deployments -->
 			<S1C1LBIPv6>
 				<isDeployed>NO</isDeployed>
@@ -4877,7 +4877,7 @@
 						<DataDisk></DataDisk>
 					</VirtualMachine>
 				</HostedService>
-			</S1C1LBIPv6>			
+			</S1C1LBIPv6>
 		</Deployment>
 		
 
@@ -4911,6 +4911,17 @@
 			<testScriptPs1>BVT-VERIFY-DEPLOYMENT-PROVISION.ps1</testScriptPs1>
 			<files></files>
 			<setupType>SingleVM</setupType>
+			<TestType></TestType>
+			<TestFeature></TestFeature>
+			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
+			<TestID>AzureBVT_001</TestID>
+		</test>
+		<test>
+			<testName>JU-VERIFY-PING</testName>
+			<testScript></testScript>
+			<testScriptPs1>JU-VERIFY-PING.ps1</testScriptPs1>
+			<files></files>
+			<setupType>M1S1</setupType>
 			<TestType></TestType>
 			<TestFeature></TestFeature>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
@@ -6763,7 +6774,7 @@
 			<testScript></testScript>
 			<testScriptPs1>ICA-DEPLOYMENT-ALL-SIZES-LOOP-TEST.ps1</testScriptPs1>
 			<files>.\remote-scripts\temp.txt</files>
-			<setupType>BVTDeployment</setupType>
+			<setupType>SingleVM</setupType>
 			<TestType></TestType>
 			<TestFeature></TestFeature>
 			<SubtestValues>CUSTOM,VM,SIZES</SubtestValues>
@@ -9412,7 +9423,7 @@
 		<Cycle>
 			<cycleName>PROVISION</cycleName>
 			<test>
-				<Name>BVT-VERIFY-DEPLOYMENT-PROVISION</Name>
+				<Name>JU-VERIFY-PING</Name>
 			</test>
 		</Cycle>
 		<Cycle>
