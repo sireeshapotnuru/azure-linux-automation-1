@@ -1,7 +1,8 @@
-<enabledRegions global="eastasia,southeastasia,centralus,eastus,eastus2,westus,northcentralus,southcentralus,northeurope,westeurope,japanwest,japaneast,brazilsouth,australiaeast,australiasoutheast,southindia,centralindia,westindia,canadacentral,canadaeast,uksouth,ukwest,westcentralus,westus2,koreacentral,koreasouth,francecentral,francesouth,australiacentral,australiacentral2">
+<enabledRegions global="eastasia,southeastasia">
+<!-- <enabledRegions global="eastasia,southeastasia,centralus,eastus,eastus2,westus,northcentralus,southcentralus,northeurope,westeurope,japanwest,japaneast,brazilsouth,australiaeast,australiasoutheast,southindia,centralindia,westindia,canadacentral,canadaeast,uksouth,ukwest,westcentralus,westus2,koreacentral,koreasouth,francecentral,francesouth,australiacentral,australiacentral2"> -->
     <Category>
         <Smoke>northeurope,westus2</Smoke>
-        <Feature>southcentralus,northcentralus,eastus2,westeurope,canadaeast</Feature>
+        <Feature>southcentralus,northcentralus,canadaeast</Feature>
     </Category>
     <Area>
         <GPU>eastus2,westeurope</GPU>
@@ -10,11 +11,11 @@
     <Tag>
         <gpu>eastus2,westeurope</gpu>
     </Tag>
-    <TestID>
-        <Feature_GPU_001>eastus2,westeurope</Feature_GPU_001>
-        <Feature_GPU_002>eastus2,westeurope</Feature_GPU_002>
-        <Feature_GPU_003>eastus2,westeurope</Feature_GPU_003>
-        <Feature_GPU_004>eastus2,westeurope</Feature_GPU_004>
-        <Feature_GPU_005>eastus2,westeurope</Feature_GPU_005>
-    </TestID>
+    <TestName>
+        <NC-series-CUDA-install-1>eastus2,westeurope</NC-series-CUDA-install-1>
+        <NC-series-CUDA-install-2>eastus2,westeurope</NC-series-CUDA-install-2>
+        <NC-series-CUDA-install-3>eastus2,westeurope</NC-series-CUDA-install-3>
+        <NC-series-CUDA-install-4>eastus2,westeurope</NC-series-CUDA-install-4>
+        <NC-series-CUDA-install-5>eastus2,westeurope</NC-series-CUDA-install-5>
+    </TestName>
 </enabledRegions>
