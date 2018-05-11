@@ -7160,7 +7160,7 @@
 			<remoteFiles></remoteFiles>
 			<InitialWaitSeconds>60</InitialWaitSeconds>
 			<Priority>P0</Priority>
-			<NumberOfReboots>5</NumberOfReboots>
+			<NumberOfReboots>1</NumberOfReboots>
 			<params>
 				<param>mpi_settings="-env I_MPI_FABRICS dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
 				<param>imb_mpi1_tests="pingpong allreduce"</param>
@@ -7919,6 +7919,21 @@
 			</TestParameters>
 			<Priority>P0</Priority>
 		</test>
+		<test>
+			<testName>ICA-N-Series-GPU-TEST-NC24rsv2</testName>
+			<testScript>
+			</testScript>
+			<testScriptps1>ICA-N-Series-GPU-TEST.ps1</testScriptps1>
+			<setupType>SingleVM</setupType>
+			<OverrideVMSize>Standard_NC24rs_v2</OverrideVMSize>
+			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
+			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
+			<files>.\remote-scripts\azuremodules.sh</files>
+			<TestParameters>
+			  <param></param>
+			</TestParameters>
+			<Priority>P0</Priority>
+		</test>		
 		<test>
 			<testName>ICA-BUILD-CUSTOM-VM-CAPTURE-VHD-ARM-NEXT</testName>
 			<testScript>
@@ -9273,6 +9288,9 @@
 			<test>
 				<Name>ICA-N-Series-GPU-TEST-NC24r</Name>
 			</test>
+			<test>
+				<Name>ICA-N-Series-GPU-TEST-NC24rsv2</Name>
+			</test>			
 		</Cycle>	
 		<Cycle>
 			<cycleName>CAPTURE-VHD-NEXT</cycleName>
