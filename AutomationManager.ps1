@@ -18,7 +18,7 @@ param (
 [switch] $vhdprep,
 [switch] $upload,
 [switch] $help,
-[string] $Distro,
+[string] $RGIdentifier,
 [string] $cycleName,
 [string] $RunSelectedTests,
 [string] $TestPriority,
@@ -35,7 +35,10 @@ param (
 [string] $resizeVMsAfterDeployment,
 [string] $ExistingResourceGroup,
 [switch] $CleanupExistingRG,
+
+# Experimental Feature
 [switch] $UseManagedDisks,
+
 [int] $coureCountExceededTimeout = 3600,
 [int] $testIterations = 1,
 [string] $tipSessionId="",
@@ -104,7 +107,6 @@ if ( $RunSelectedTests )
 if ($ExistingResourceGroup)
 {
     Set-Variable -Name ExistingRG -Value $ExistingResourceGroup -Scope Global
-    LogMsg "1111111111111111111111"
 }
 if ($CleanupExistingRG)
 {
@@ -164,7 +166,6 @@ try
     }
 
     $Platform=$xmlConfig.config.global.platform
-    $global=$xmlConfig.config.global
 
     $testStartTime = [DateTime]::Now.ToUniversalTime()
     Set-Variable -Name testStartTime -Value $testStartTime -Scope Global
@@ -183,7 +184,7 @@ try
     $logFile = $testDir + "\" + $logfile
     Set-Variable -Name logfile -Value $logFile -Scope Global
     Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
-    Set-Variable -Name Distro -Value $Distro -Scope Global
+    Set-Variable -Name Distro -Value $RGIdentifier -Scope Global
     Set-Variable -Name onCloud -Value $onCloud -Scope Global
     Set-Variable -Name xmlConfig -Value $xmlConfig -Scope Global
 	Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
@@ -258,48 +259,23 @@ try
         LogMsg "CurrentStorageAccount  : $($AzureSetup.StorageAccount)"
     }
 
-    #Check for the Azure platform
-    if($Platform -eq "Azure")
+
+    #Installing Azure-SDK
+    if ( $UseAzureResourceManager )
     {
-	    #Installing Azure-SDK
-        if ( $UseAzureResourceManager )
-        {
-            LogMsg "*************AZURE RESOURCE GROUP MODE****************"
-        }
-        else
-        {
-	        LogMsg "*************AZURE SERVICE MANAGEMENT MODE****************"
-        }
-        if($keepReproInact)
-        {
-            LogMsg "PLEASE NOTE: keepReproInact is set. VMs will not be deleted after test is finished even if, test gets PASS."
-        }
+        LogMsg "*************AZURE RESOURCE GROUP MODE****************"
     }
-    if($upload)
+    else
     {
-    $uploadflag=$true
+        LogMsg "Azure Service management mode is depricated."
     }
-    if ($vhdprep)
+    if($keepReproInact)
     {
-	    $sts=VHDProvision $xmlConfig $uploadflag
-	    if($sts -contains $false)
-	    {
-	        LogMsg  "Exiting with Error..!!!"
-	        exit 3
-	    }
-	     LogMsg  "moving VHD provision log file to test results directory"
-	     LogMsg "move VHD_Provision.log ${testDir}\VHD_Provision.log"
-	     move "VHD_Provision.log" "${testDir}\VHD_Provision.log"
-	     LogMsg "----------------------------------------------------------"
-	     LogMsg "VHD provision logs : ${testDir}\VHD_Provision.log "
+        LogMsg "PLEASE NOTE: keepReproInact is set. VMs will not be deleted after test is finished even if, test gets PASS."
     }
-    if (!$runTests)
-    {
-	    LogMsg "No tests will be run as runtests parameter is not provided"
-	    LogMsg "Exiting : with VHD prepared for Automation"
-	    LogMsg "==========================================="
-	    exit 4
-    }
+
+    $runTests = $true
+    $Platform = "Azure"
     if ($runTests)
     {
 		if($Platform -ne "Azure")

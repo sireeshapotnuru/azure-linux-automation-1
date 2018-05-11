@@ -1,6 +1,0 @@
-#all the IPs should be Internal ips 
-<back_endVM_ip></back_endVM_ip>
-<front_endVM_ips></front_endVM_ips>
-<front_endVM_username></front_endVM_username>
-<front_endVM_password></front_endVM_password>
-

@@ -287,14 +287,9 @@ Function RunTestsOnCycle ($cycleName , $xmlConfig, $Distro, $testIterations )
 			if ($currentTestData)
 			{
 
-				if ( $UseAzureResourceManager -and !($currentTestData.SupportedExecutionModes -imatch "AzureResourceManager"))
+				if (!( $currentTestData.Platform.Contains($xmlConfig.config.CurrentTestPlatform)))
 				{
-					LogMsg "$($currentTestData.testName) does not support AzureResourceManager execution mode."
-					continue;
-				}
-				if (!$UseAzureResourceManager -and !($currentTestData.SupportedExecutionModes -imatch "AzureServiceManagement"))
-				{
-					LogMsg "$($currentTestData.testName) does not support AzureServiceManagement execution mode."
+					LogMsg "$($currentTestData.testName) does not support $($xmlConfig.config.CurrentTestPlatform) platform."
 					continue;
 				}
 				if(($testPriority -imatch $currentTestData.Priority ) -or (!$testPriority))
@@ -316,7 +311,7 @@ Function RunTestsOnCycle ($cycleName , $xmlConfig, $Distro, $testIterations )
 							$LogDir = "$testDir\$($currentTestData.testName)"
 							Set-Variable -Name LogDir -Value $LogDir -Scope Global
 							LogMsg "~~~~~~~~~~~~~~~TEST STARTED : $($currentTestData.testName)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-							$testScriptPs1 = $currentTestData.testScriptPs1
+							$testScriptPs1 = $currentTestData.PowershellScript
 							$startTime = [Datetime]::Now.ToUniversalTime()
 							$command = ".\remote-scripts\" + $testScriptPs1
 							LogMsg "Starting test $($currentTestData.testName)"
@@ -385,7 +380,7 @@ Function RunTestsOnCycle ($cycleName , $xmlConfig, $Distro, $testIterations )
 							$LogDir = "$testDir\$($currentTestData.testName)"
 							Set-Variable -Name LogDir -Value $LogDir -Scope Global
 							LogMsg "~~~~~~~~~~~~~~~TEST STARTED : $($currentTestData.testName)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-							$testScriptPs1 = $currentTestData.testScriptPs1
+							$testScriptPs1 = $currentTestData.PowershellScript
 							$command = ".\remote-scripts\" + $testScriptPs1
 							LogMsg "$command"
 							LogMsg "Starting multiple tests : $($currentTestData.testName)"
