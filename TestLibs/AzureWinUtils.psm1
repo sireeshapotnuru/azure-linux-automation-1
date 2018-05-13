@@ -1,35 +1,6 @@
-﻿
-Import-Module .\TestLibs\RDFELibs.psm1 -Force
-
-#LogMsg ()
+﻿#LogMsg ()
 # Operation : Prints the messages, warnings, errors
 # Parameter : message string
-
-
-function LogErr([string]$msg)
-{
-    #Masking the password.
-    $pass2 = $password.Replace('"','')
-    $msg = $msg.Replace($pass2,"$($pass2[0])***$($pass2[($pass2.Length) - 1])")
-	$now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss : ")
-	$tag="ERROR : "
-	$color = "Red" 
-	($tag+ $now + $msg) | out-file -encoding ASCII -append -filePath $logFile
-	write-host -f $color "$tag $now $msg"
-}
-
-function LogWarn([string]$msg)
-{      
-    #Masking the password.
-    $pass2 = $password.Replace('"','')
-    $msg = $msg.Replace($pass2,"$($pass2[0])***$($pass2[($pass2.Length) - 1])")
-	$now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss : ")
-    $tag="WARNING : "
-	$color = "Yellow" 
-	($tag+ $now + $msg) | out-file -encoding ASCII -append -filePath $logFile
-	write-host -f $color "$tag $now $msg"
-}
-
 function GetTestSummary($testCycle, [DateTime] $StartTime, [string] $xmlFilename, [string] $distro, $testSuiteResultDetails)
 {
     <#

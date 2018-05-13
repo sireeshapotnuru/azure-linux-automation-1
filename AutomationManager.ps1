@@ -11,6 +11,7 @@
 ## Author : v-ampaw@microsoft.com
 ###############################################################################################
 param (
+[CmdletBinding()]
 [string] $xmlConfigFile,
 [switch] $eMail,
 [string] $logFilename="azure_ica.log",
@@ -45,11 +46,7 @@ param (
 [string] $tipCluster="",
 [switch] $ForceDeleteResources
 )
-
-Import-Module .\TestLibs\AzureWinUtils.psm1 -Force -Scope Global
-Import-Module .\TestLibs\RDFELibs.psm1 -Force -Scope Global
-Import-Module .\TestLibs\ARMLibrary.psm1 -Force -Scope Global
-
+Get-ChildItem .\TestLibs\*.psm1 | ForEach-Object { Import-Module $_.FullName -Force}
 $xmlConfig = [xml](Get-Content $xmlConfigFile)
 $user = $xmlConfig.config.Azure.Deployment.Data.UserName
 $password = $xmlConfig.config.Azure.Deployment.Data.Password
@@ -75,6 +72,7 @@ if($EnableAcceleratedNetworking)
 {
     Set-Variable -Name EnableAcceleratedNetworking -Value $true -Scope Global
 }
+
 if($ForceDeleteResources)
 {
     Set-Variable -Name ForceDeleteResources -Value $true -Scope Global
@@ -125,189 +123,104 @@ else
     Set-Variable -Name UseManagedDisks -Value $false -Scope Global    
 }
 
-if ( $xmlConfig.config.Azure.General.StorageAccount -imatch "NewStorage_" )
-{
-    $NewASMStorageAccountType = ($xmlConfig.config.Azure.General.StorageAccount).Replace("NewStorage_","")
-    Set-Variable -Name NewASMStorageAccountType -Value $NewASMStorageAccountType -Scope Global
-}
 if ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "NewStorage_" )
 {
     $NewARMStorageAccountType = ($xmlConfig.config.Azure.General.ARMStorageAccount).Replace("NewStorage_","")
-    Set-Variable -Name NewARMStorageAccountType -Value $NewASMStorageAccountType -Scope Global
+    Set-Variable -Name NewARMStorageAccountType -Value $NewARMStorageAccountType -Scope Global
 }
-
 try
 {
-    # Main Body of the script
-    # Work flow starts here
-    # Creating TestResults directory
-    $testResults = "TestResults"
+    $Platform = $xmlConfig.config.CurrentTestPlatform
 
-    if (! (test-path $testResults))
+    if ( $Platform -eq "Azure" )
     {
-        mkdir $testResults | out-null
-    }
-    if ($help)
-    {
-        Usage
-        Write-Host "Info : Help command was passed, not runTests."
-        exit 1
-    }
-    if (! $xmlConfigFile)
-    {
-        Write-Host  "Error: Missing the xmlConfigFile command-line argument." -ForegroundColor Red
-        Usage
-        exit 2
-    }
-    if (! (test-path $xmlConfigFile))
-    {
-        Write-Host  "Error: XML config file", $xmlConfigFile, "does not exist." -ForegroundColor Red
-        exit 3
-    }
-
-    $Platform=$xmlConfig.config.global.platform
-
-    $testStartTime = [DateTime]::Now.ToUniversalTime()
-    Set-Variable -Name testStartTime -Value $testStartTime -Scope Global
-
-    $testDir = $testResults + "\" + $cycleName + "-" + $testStartTime.ToString("yyyyMMddHHmmssff")
-
-    mkdir $testDir -ErrorAction SilentlyContinue | out-null
-    Set-Content -Value "" -Path .\report\testSummary.html -Force -ErrorAction SilentlyContinue | Out-Null
-    Set-Content -Value "" -Path .\report\AdditionalInfo.html -Force -ErrorAction SilentlyContinue | Out-Null
-
-    if ($logFilename)
-    {
-    	$logfile = $logFilename
-    }
-
-    $logFile = $testDir + "\" + $logfile
-    Set-Variable -Name logfile -Value $logFile -Scope Global
-    Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
-    Set-Variable -Name Distro -Value $RGIdentifier -Scope Global
-    Set-Variable -Name onCloud -Value $onCloud -Scope Global
-    Set-Variable -Name xmlConfig -Value $xmlConfig -Scope Global
-	Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
-    Set-Variable -Name vnetIsAllConfigured -Value $false -Scope Global
-    if($EconomyMode)
-    {
-        Set-Variable -Name EconomyMode -Value $true -Scope Global
-        if($keepReproInact)
+        $testResults = "TestResults"
+        if (! (test-path $testResults))
         {
-            Set-Variable -Name keepReproInact -Value $true -Scope Global
+            mkdir $testResults | out-null
         }
-    }
-    else
-    {
-        Set-Variable -Name EconomyMode -Value $false -Scope Global
-        if($keepReproInact)
+        $testStartTime = [DateTime]::Now.ToUniversalTime()
+        Set-Variable -Name testStartTime -Value $testStartTime -Scope Global
+        $testDir = $testResults + "\" + $cycleName + "-" + $testStartTime.ToString("yyyyMMddHHmmssff")
+        mkdir $testDir -ErrorAction SilentlyContinue | out-null
+        Set-Content -Value "" -Path .\report\testSummary.html -Force -ErrorAction SilentlyContinue | Out-Null
+        Set-Content -Value "" -Path .\report\AdditionalInfo.html -Force -ErrorAction SilentlyContinue | Out-Null
+        $logFile = $testDir + "\" + "AzureLogs.txt"
+        Set-Variable -Name logfile -Value $logFile -Scope Global
+        Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
+        Set-Variable -Name Distro -Value $RGIdentifier -Scope Global
+        Set-Variable -Name onCloud -Value $onCloud -Scope Global
+        Set-Variable -Name xmlConfig -Value $xmlConfig -Scope Global
+        Set-Content -Path .\report\lastLogDirectory.txt -Value $testDir -ErrorAction SilentlyContinue
+        Set-Variable -Name vnetIsAllConfigured -Value $false -Scope Global
+        if($EconomyMode)
         {
-            Set-Variable -Name keepReproInact -Value $true -Scope Global
+            Set-Variable -Name EconomyMode -Value $true -Scope Global
+            if($keepReproInact)
+            {
+                Set-Variable -Name keepReproInact -Value $true -Scope Global
+            }
         }
         else
         {
-            Set-Variable -Name keepReproInact -Value $false -Scope Global
+            Set-Variable -Name EconomyMode -Value $false -Scope Global
+            if($keepReproInact)
+            {
+                Set-Variable -Name keepReproInact -Value $true -Scope Global
+            }
+            else
+            {
+                Set-Variable -Name keepReproInact -Value $false -Scope Global
+            }
         }
-    }
-    $AzureSetup = $xmlConfig.config.Azure.General
-    LogMsg  ("Info : AzureAutomationManager.ps1 - LIS on Azure Automation")
-    LogMsg  ("Info : Created test results directory:", $testDir)
-    LogMsg  ("Info : Logfile = ", $logfile)
-    LogMsg  ("Info : Using config file $xmlConfigFile")
-    if ( ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "ExistingStorage" ) -or ($xmlConfig.config.Azure.General.StorageAccount -imatch "ExistingStorage" ) )
-    {
-        $regionName = $xmlConfig.config.Azure.General.Location.Replace(" ","").Replace('"',"").ToLower()
-        $regionStorageMapping = [xml](Get-Content .\XML\RegionAndStorageAccounts.xml)
-
-        if ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "standard")
+        $AzureSetup = $xmlConfig.config.Azure.General
+        LogMsg  ("Info : AzureAutomationManager.ps1 - LIS on Azure Automation")
+        LogMsg  ("Info : Created test results directory:", $testDir)
+        LogMsg  ("Info : Logfile = ", $logfile)
+        LogMsg  ("Info : Using config file $xmlConfigFile")
+        if ( ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "ExistingStorage" ) -or ($xmlConfig.config.Azure.General.StorageAccount -imatch "ExistingStorage" ) )
         {
-           $xmlConfig.config.Azure.General.ARMStorageAccount = $regionStorageMapping.AllRegions.$regionName.StandardStorage
-           $xmlConfig.config.Azure.General.StorageAccount = $regionStorageMapping.AllRegions.$regionName.StandardStorage
-           LogMsg "Info : Selecting existing standard storage account in $regionName - $($regionStorageMapping.AllRegions.$regionName.StandardStorage)"
+            $regionName = $xmlConfig.config.Azure.General.Location.Replace(" ","").Replace('"',"").ToLower()
+            $regionStorageMapping = [xml](Get-Content .\XML\RegionAndStorageAccounts.xml)
+    
+            if ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "standard")
+            {
+               $xmlConfig.config.Azure.General.ARMStorageAccount = $regionStorageMapping.AllRegions.$regionName.StandardStorage
+               LogMsg "Info : Selecting existing standard storage account in $regionName - $($regionStorageMapping.AllRegions.$regionName.StandardStorage)"
+            }
+            if ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "premium")
+            {
+               $xmlConfig.config.Azure.General.ARMStorageAccount = $regionStorageMapping.AllRegions.$regionName.PremiumStorage
+               LogMsg "Info : Selecting existing premium storage account in $regionName - $($regionStorageMapping.AllRegions.$regionName.PremiumStorage)"
+            }
         }
-        if ( $xmlConfig.config.Azure.General.ARMStorageAccount -imatch "premium")
-        {
-           $xmlConfig.config.Azure.General.ARMStorageAccount = $regionStorageMapping.AllRegions.$regionName.PremiumStorage
-           $xmlConfig.config.Azure.General.StorageAccount = $regionStorageMapping.AllRegions.$regionName.PremiumStorage
-           LogMsg "Info : Selecting existing premium storage account in $regionName - $($regionStorageMapping.AllRegions.$regionName.PremiumStorage)"
-
-        }
-    }
-    if ($UseAzureResourceManager)
-    {
         Set-Variable -Name UseAzureResourceManager -Value $true -Scope Global
-        $selectSubscription = Select-AzureRmSubscription -SubscriptionId $AzureSetup.SubscriptionID
-        $subIDSplitted = ($AzureSetup.SubscriptionID).Split("-")
-        $userIDSplitted = ($selectSubscription.Account.Id).Split("-")
-        LogMsg "SubscriptionName       : $($AzureSetup.SubscriptionName)"
+        $SelectedSubscription = Select-AzureRmSubscription -SubscriptionId $AzureSetup.SubscriptionID
+        $subIDSplitted = ($SelectedSubscription.Subscription.SubscriptionId).Split("-")
+        $userIDSplitted = ($SelectedSubscription.Account.Id).Split("-")
+        LogMsg "SubscriptionName       : $($SelectedSubscription.Subscription.Name)"
         LogMsg "SubscriptionId         : $($subIDSplitted[0])-xxxx-xxxx-xxxx-$($subIDSplitted[4])"
         LogMsg "User                   : $($userIDSplitted[0])-xxxx-xxxx-xxxx-$($userIDSplitted[4])"
-        LogMsg "ServiceEndpoint        : $($selectSubscription.Environment.ActiveDirectoryServiceEndpointResourceId)"
+        LogMsg "ServiceEndpoint        : $($SelectedSubscription.Environment.ActiveDirectoryServiceEndpointResourceId)"
         LogMsg "CurrentStorageAccount  : $($AzureSetup.ARMStorageAccount)"
-    }
-    else
-    {
-        $LinuxSSHCertificate = Import-Certificate -FilePath .\ssh\$sshPublickey -CertStoreLocation Cert:\CurrentUser\My
-        $sshPublicKeyThumbprint = $LinuxSSHCertificate.Thumbprint
-        Set-Variable -Name UseAzureResourceManager -Value $false -Scope Global
-        LogMsg "Setting Azure Subscription ..."
-		$out = SetSubscription -subscriptionID $AzureSetup.SubscriptionID -subscriptionName $AzureSetup.SubscriptionName -certificateThumbprint $AzureSetup.CertificateThumbprint -managementEndpoint $AzureSetup.ManagementEndpoint -storageAccount $AzureSetup.StorageAccount -environment $AzureSetup.Environment
-        $currentSubscription = Get-AzureSubscription -SubscriptionId $AzureSetup.SubscriptionID -ExtendedDetails
-        LogMsg "SubscriptionName       : $($currentSubscription.SubscriptionName)"
-        LogMsg "SubscriptionId         : $($currentSubscription.SubscriptionID)"
-        LogMsg "ServiceEndpoint        : $($currentSubscription.ServiceEndpoint)"
-        LogMsg "CurrentStorageAccount  : $($AzureSetup.StorageAccount)"
-    }
-
-
-    #Installing Azure-SDK
-    if ( $UseAzureResourceManager )
-    {
-        LogMsg "*************AZURE RESOURCE GROUP MODE****************"
-    }
-    else
-    {
-        LogMsg "Azure Service management mode is depricated."
-    }
-    if($keepReproInact)
-    {
-        LogMsg "PLEASE NOTE: keepReproInact is set. VMs will not be deleted after test is finished even if, test gets PASS."
-    }
-
-    $runTests = $true
-    $Platform = "Azure"
-    if ($runTests)
-    {
-		if($Platform -ne "Azure")
-		{
-	        LogMsg "Info : Starting ICA test suite on Hyper-V Server"
-	        ##To do
-	        #Ivoking ICA scripts on Hyper-V server
-	        #cd ...\Win8_ICA\ica
-	        #.\ica.ps1 .\XML\test.xml -runtests
-	        exit
+        if($keepReproInact)
+        {
+            LogMsg "PLEASE NOTE: keepReproInact is set. VMs will not be deleted after test is finished even if, test gets PASS."
         }
+        
         if ($DebugDistro)
         {
             $OsImage = $xmlConfig.config.Azure.Deployment.Data.Distro | ? { $_.name -eq $DebugDistro} | % { $_.OsImage }
             Set-Variable -Name DebugOsImage -Value $OsImage -Scope Global
         }
         $testCycle =  GetCurrentCycleData -xmlConfig $xmlConfig -cycleName $cycleName
-        #Invoke Azure Test Suite
-
+        Write-Host "$Distro............."
         $testSuiteResultDetails=.\AzureTestSuite.ps1 $xmlConfig -Distro $Distro -cycleName $cycleName -testIterations $testIterations
-        #if(!$sts)
-        #{
-            #exit
-        #}
-        # Add summary information to the ica log file
         $logDirFilename = [System.IO.Path]::GetFilenameWithoutExtension($xmlConfigFile)
-        #$summaryText = "<br />~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br /><br />"
         $summaryAll = GetTestSummary -testCycle $testCycle -StartTime $testStartTime -xmlFileName $logDirFilename -distro $Distro -testSuiteResultDetails $testSuiteResultDetails
         $PlainTextSummary += $summaryAll[0]
         $HtmlTextSummary += $summaryAll[1]
         Set-Content -Value $HtmlTextSummary -Path .\report\testSummary.html -Force | Out-Null
-        # Remove HTML tags from platin text summary.
         $PlainTextSummary = $PlainTextSummary.Replace("<br />", "`r`n")
         $PlainTextSummary = $PlainTextSummary.Replace("<pre>", "")
         $PlainTextSummary = $PlainTextSummary.Replace("</pre>", "")
@@ -316,6 +229,10 @@ try
         {
             SendEmail $xmlConfig -body $HtmlTextSummary
         }
+    }
+    else 
+    {
+        LogError "$Platform not supported."    
     }
 }
 catch

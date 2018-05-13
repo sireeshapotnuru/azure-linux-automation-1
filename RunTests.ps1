@@ -342,7 +342,7 @@ try
     
     #endregion
 
-    LogMsg ".\AutomationManager.ps1 -xmlConfigFile $xmlFile -cycleName `"TC-$shortRandomNumber`" -Distro $RGIdentifier -runtests -UseAzureResourceManager"
+    LogMsg ".\AutomationManager.ps1 -xmlConfigFile $xmlFile -cycleName `"TC-$shortRandomNumber`" -RGIdentifier $RGIdentifier -runtests -UseAzureResourceManager"
     .\AutomationManager.ps1 -xmlConfigFile $xmlFile -cycleName "TC-$shortRandomNumber" -RGIdentifier $RGIdentifier -runtests -UseAzureResourceManager -
     
     #TBD Analyse the test result

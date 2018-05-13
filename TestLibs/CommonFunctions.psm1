@@ -1,33 +1,66 @@
+Function ThrowException($Exception)
+{
+    $line = $Exception.InvocationInfo.ScriptLineNumber
+    $script_name = ($Exception.InvocationInfo.ScriptName).Replace($PWD,".")
+    $ErrorMessage =  $Exception.Exception.Message
+    Write-Host "EXCEPTION : $ErrorMessage"
+    Write-Host "SOURCE : Line $line in script $script_name."
+    Throw "Calling function - $($MyInvocation.MyCommand)"
+}
 function LogVerbose () 
 {
     param
     (
-        $text
+        [string]$text
     )
-    $text = $text.Replace('"','`"')
-    $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-    Invoke-Expression -Command "Write-Verbose `"$now : $text`" $VerboseCommand"    
+    try
+    {
+        $text = $text.Replace('"','`"')
+        $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+        if ( $VerboseCommand )
+        {
+            Write-Verbose "$now : $text" -Verbose       
+        }
+    }
+    catch
+    {
+        ThrowException($_)
+    }
 }
 function LogError () 
 {
     param
     (
-        $text
+        [string]$text
     )
-    $text = $text.Replace('"','`"')
-    $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-    Invoke-Expression -Command "Write-Error `"$now : $text`""    
+    try
+    {
+        $text = $text.Replace('"','`"')
+        $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+        Write-Error "$now : $text"
+    }
+    catch
+    {
+        ThrowException($_)
+    }    
 }
 
 function LogMsg()
 {
     param
     (
-        $text
+        [string]$text
     )
-    $text = $text.Replace('"','`"')
-    $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-    Invoke-Expression -Command "Write-Host `"$now : $text`""  
+    try
+    {
+        $text = $text.Replace('"','`"')
+        $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
+        Write-Host "$now : $text"
+    }
+    catch
+    {
+        ThrowException($_)
+    }  
 }
 
 Function ValiateXMLs( [string]$ParentFolder )
@@ -46,7 +79,7 @@ Function ValiateXMLs( [string]$ParentFolder )
         }
         catch
         {
-            LogError -text "$($file.FullName) validation failed."
+            LogErroror -text "$($file.FullName) validation failed."
             $xmlErrorFiles += $file.FullName
         }
     }

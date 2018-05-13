@@ -9,11 +9,6 @@ Set-Variable -Name user -Value $user -Scope Global
 Set-Variable -Name password -Value $password -Scope Global
 $dtapServerIp = $xmlConfig.config.Azure.Deployment.Data.DTAP.IP
 
-Import-Module .\TestLibs\UtilLibs.psm1 -Force
-Import-Module .\TestLibs\RDFELibs.psm1 -Force
-Import-Module .\TestLibs\DataBase\DataBase.psm1 -Force
-Import-Module .\TestLibs\PerfTest\PerfTest.psm1 -Force
-
 Function CollectLogs()
 {}
 
@@ -124,9 +119,11 @@ Function RunTestsOnCycle ($cycleName , $xmlConfig, $Distro, $testIterations )
 		{
 			if ( $UseAzureResourceManager )
 			{
-				if ( $tempDistro.ARMImage )
+				Write-Host $tempDistro.ARMImage 
+				if ( ($tempDistro.ARMImage.Publisher -ne $null) -and ($tempDistro.ARMImage.Offer -ne $null) -and ($tempDistro.ARMImage.Sku -ne $null) -and ($tempDistro.ARMImage.Version -ne $null) )
 				{
-					Set-Variable -Name ARMImage -Value $tempDistro.ARMImage -Scope Global
+					$ARMImage = $tempDistro.ARMImage
+					Set-Variable -Name ARMImage -Value $ARMImage -Scope Global
 					LogMsg "ARMImage name - $($ARMImage.Publisher) : $($ARMImage.Offer) : $($ARMImage.Sku) : $($ARMImage.Version)"
 					$dbARMImage = "$($ARMImage.Publisher) $($ARMImage.Offer) $($ARMImage.Sku) $($ARMImage.Version)"
 				}

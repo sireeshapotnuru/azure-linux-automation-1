@@ -1,11 +1,3 @@
-#region Azure RDFE Methods
-
-Import-Module .\TestLibs\ExtensionLibrary.psm1 -Force
-Import-Module .\TestLibs\LISALibrary.psm1 -Force
-<#
-.SYNOPSIS 
-List All OS Images in Cluster
-#>
 Function ListOSImages()
 {
 	$images = Get-AzureVMImage
@@ -76,8 +68,8 @@ Function DetectLinuxDistro($VIP, $SSHport, $testVMUser, $testVMPassword)
 		$DistroName = RunLinuxCmd -username $testVMUser -password $testVMPassword -ip $VIP -port $SSHport -command "/home/$user/DetectLinuxDistro.sh" -runAsSudo
 		if(($DistroName -imatch "Unknown") -or (!$DistroName))
 		{
-			LogErr "Linux distro detected : $DistroName"
-			Throw "Unable to detect distro."
+			LogError "Linux distro detected : $DistroName"
+			Throw "Calling function - $($MyInvocation.MyCommand). Unable to detect distro."
 		}
 		else
 		{
@@ -152,7 +144,7 @@ Function GetCurrentPackageData ($packageXml, $packageName)
 	}
 	if ($failed)
 	{
-		Throw "Unable to find $packageName in package definitions.."
+		Throw "Calling function - $($MyInvocation.MyCommand). Unable to find $packageName in package definitions.."
 	}
 	return $expectedDefinition
 }
@@ -201,7 +193,7 @@ Function InstallPackages ($VMIpAddress, $VMSshPort, $VMUserName, $VMPassword)
 			}
 			else
 			{
-				LogErr "Package : $currentPackageName : Installation failed."
+				LogError "Package : $currentPackageName : Installation failed."
 				$installError=$installError+1
 			}
 
@@ -230,7 +222,7 @@ Function InstallPackages ($VMIpAddress, $VMSshPort, $VMUserName, $VMPassword)
 			}
 			else
 			{
-				LogErr "Package : $currentPackageName : Installation failed."
+				LogError "Package : $currentPackageName : Installation failed."
 				$installError=$installError+1
 			}
 
@@ -245,7 +237,7 @@ Function InstallPackages ($VMIpAddress, $VMSshPort, $VMUserName, $VMPassword)
 
 	if ($installError -gt 0)
 	{
-		LogErr "$installError out of $installCount packages failed to install"
+		LogError "$installError out of $installCount packages failed to install"
 		$retValue=$false
 	}
 	else
@@ -287,7 +279,7 @@ Function SetSubscription ($subscriptionID, $subscriptionName, $certificateThumbp
 		}
 		if ( $myCert.Thumbprint -ne $certificateThumbprint )
 		{
-			Throw "Unable to load certificate from `"Cert:\LocalMachine\`" and `"Cert:\CurrentUser\`""
+			Throw "Calling function - $($MyInvocation.MyCommand). Unable to load certificate from `"Cert:\LocalMachine\`" and `"Cert:\CurrentUser\`""
 		}
 		# For Azure Powershell Version >= 0.8.8, Environment is used in Set-AzureSubscription for replacing ManagementEndpoint
 		if (IsEnvironmentSupported)
@@ -421,7 +413,7 @@ Function CreateService($serviceName, $location, $AffinityGroup)
 			$retValue = "True"
 		}
 		else {
-			LogErr "Failed"
+			LogError "Failed"
 			$retValue = "False"
 		  
 		}
@@ -732,7 +724,7 @@ Function CreateDeployment ($DeploymentCommand, $NewServiceName , $vmCount, [stri
 			else
 			{
 				$retValue = "False"
-				LogErr "Expected VMs : $vmCount. Deployed VMs : $vmCounter"
+				LogError "Expected VMs : $vmCount. Deployed VMs : $vmCounter"
 			}
 		 }
 		 catch
@@ -907,7 +899,7 @@ Function CreateAllDeployments($setupType, $xmlConfig, $Distro, [string]$region =
 						    }
 						    else
 						    {
-							    LogErr "Unable to Deploy one or more VM's"
+							    LogError "Unable to Deploy one or more VM's"
 							    $retryDeployment = $retryDeployment + 1
 							    $retValue = "False"
 							    $isServiceDeployed = "False"
@@ -915,7 +907,7 @@ Function CreateAllDeployments($setupType, $xmlConfig, $Distro, [string]$region =
 					    }
 					    else
 					    {
-						    LogErr "Unable to Add certificate to $serviceName"
+						    LogError "Unable to Add certificate to $serviceName"
 						    $retryDeployment = $retryDeployment + 1
 						    $retValue = "False"
 						    $isServiceDeployed = "False"
@@ -924,7 +916,7 @@ Function CreateAllDeployments($setupType, $xmlConfig, $Distro, [string]$region =
 				    }
 				    else
 				    {
-					    LogErr "Unable to create $serviceName"
+					    LogError "Unable to create $serviceName"
 					    $retryDeployment = $retryDeployment + 1
 					    $retValue = "False"
 					    $isServiceDeployed = "False"
@@ -932,7 +924,7 @@ Function CreateAllDeployments($setupType, $xmlConfig, $Distro, [string]$region =
 			    }	
 			    else
 			    {
-				    LogErr "Unable to delete existing service - $serviceName"
+				    LogError "Unable to delete existing service - $serviceName"
 				    $retryDeployment = 3
 				    $retValue = "False"
 				    $isServiceDeployed = "False"
@@ -970,7 +962,7 @@ Function VerifyAllDeployments($servicesToVerify, [Switch]$GetVMProvisionTime)
 		}
 		else
 		{
-			LogErr "$serviceName provision Failed.."
+			LogError "$serviceName provision Failed.."
 			$retValue = "False"
 			break
 		}
@@ -1142,14 +1134,14 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword)
 				{
 					if (( $line -imatch "Call Trace" ) -and  ($line -inotmatch "initcall "))
 					{
-						LogErr $line
+						LogError $line
 						$callTraceFound = $true
 					}
 					if ( $callTraceFound )
 					{
 						if ( $line -imatch "\[<")
 						{
-							LogErr $line
+							LogError $line
 						}
 					}
 				}
@@ -1172,14 +1164,14 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword)
 				{
 					if (( $line -imatch "Call Trace" ) -and ($line -inotmatch "initcall "))
 					{
-						LogErr $line
+						LogError $line
 						$callTraceFound = $true
 					}
 					if ( $callTraceFound )
 					{
 						if ( $line -imatch "\[<")
 						{
-							LogErr $line
+							LogError $line
 						}
 					}
 				}
@@ -1208,7 +1200,7 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword)
 						if ( ($line.InputObject -imatch "fail") -or ($line.InputObject -imatch "error") -or ($line.InputObject -imatch "warning"))
 						{
 							$errorCount += 1
-							LogErr $line.InputObject
+							LogError $line.InputObject
 						}
 						else
 						{
@@ -1220,7 +1212,7 @@ Function GetAndCheckKernelLogs($allDeployedVMs, $status, $vmUser, $vmPassword)
 				LogMsg "$($VM.RoleName): $status Kernel logs collected and Compared ..SUCCESSFULLY"
 				if ($errorCount -gt 0)
 				{
-					LogErr "Found $errorCount fail/error/warning messages in kernel logs during execution."
+					LogError "Found $errorCount fail/error/warning messages in kernel logs during execution."
 					$retValue = $false
 				}
 				if ( $callTraceFound )
@@ -1298,13 +1290,13 @@ Function CheckKernelLogs($allVMData, $vmUser, $vmPassword)
 				{
 					if ( ($line -imatch "$errorLine") -and ($line -inotmatch "initcall "))
 					{
-						LogErr $line
+						LogError $line
 						$totalErrors += 1
 						$vmErrors += 1
 					}
 					if ( $line -imatch "\[<")
 					{
-						LogErr $line
+						LogError $line
 					}
 				}
 			}
@@ -1315,7 +1307,7 @@ Function CheckKernelLogs($allVMData, $vmUser, $vmPassword)
 			}
 			else
 			{
-				LogErr "$($VM.RoleName) : $vmErrors errors found."
+				LogError "$($VM.RoleName) : $vmErrors errors found."
 				$retValue = $false
 			}
 		}
@@ -1493,7 +1485,7 @@ Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, 
         $kernelUpgradeStatus = InstallCustomKernel -customKernel $customKernel -allVMData $allVMData -RestartAfterUpgrade
         if ( !$kernelUpgradeStatus )
         {
-            LogErr "Custom Kernel: $customKernel installation FAIL. Aborting tests."
+            LogError "Custom Kernel: $customKernel installation FAIL. Aborting tests."
             $retValue = ""
         }
     }
@@ -1503,7 +1495,7 @@ Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, 
         $LISUpgradeStatus = InstallCustomLIS -customLIS $customLIS -allVMData $allVMData -customLISBranch $customLISBranch -RestartAfterUpgrade
         if ( !$LISUpgradeStatus )
         {
-            LogErr "Custom Kernel: $customKernel installation FAIL. Aborting tests."
+            LogError "Custom Kernel: $customKernel installation FAIL. Aborting tests."
             $retValue = ""
         }
     }
@@ -1512,7 +1504,7 @@ Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, 
 		$SRIOVStatus = EnableSRIOVInAllVMs -allVMData $allVMData
 		if ( !$SRIOVStatus)
 		{
-            LogErr "Failed to enable Accelerated Networking. Aborting tests."
+            LogError "Failed to enable Accelerated Networking. Aborting tests."
             $retValue = ""
 		}
     }
@@ -1524,7 +1516,7 @@ Function DeployVMs ($xmlConfig, $setupType, $Distro, $getLogsIfFailed = $false, 
 		$SRIOVStatus = EnableSRIOVInAllVMs -allVMData $allVMData
 		if ( $SRIOVStatus -ne "True" )
 		{
-            LogErr "Failed to enable Accelerated Networking. Aborting tests."
+            LogError "Failed to enable Accelerated Networking. Aborting tests."
             $retValue = ""
 		}
     }
@@ -1962,12 +1954,12 @@ Function GetTestVMHardwareDetails ($xmlConfigFile, $setupType, [switch]$VCPU, [s
 
 	if ($switchCount -lt 1)
 	{
-		LogErr "Use atleast one switch from `$VCPU or `$RAM.."
+		LogError "Use atleast one switch from `$VCPU or `$RAM.."
 		$retValue = "Error"
 	}
 	elseif ($switchCount -gt 1 )
 	{
-		LogErr "Use only one switch from `$VCPU or `$RAM.."
+		LogError "Use only one switch from `$VCPU or `$RAM.."
 		$retValue = "Error"
 	}
 	elseif ($switchCount -eq 1)
@@ -2004,7 +1996,7 @@ Function GetTestVMHardwareDetails ($xmlConfigFile, $setupType, [switch]$VCPU, [s
 		}
 		catch
 		{
-			LogErr "Unable to find $setupType details."
+			LogError "Unable to find $setupType details."
 			$retValue = "Unknown"
 		}
 	}
@@ -2089,7 +2081,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 								if ( ($now - $uploadStartTime).TotalSeconds -gt 600 )
 								{
 									$uploadTimout = $true
-									LogErr "Upload Timout!"
+									LogError "Upload Timout!"
 								}
 								sleep -Seconds 1
 								$uploadJobStatus = Get-Job -Id $uploadJob.Id
@@ -2109,7 +2101,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 						{
 							Write-Host "Error in upload after $retry Attempt,Hence giving up"
 							$retry=$retry+1
-							Throw "Error in upload after $retry Attempt,Hence giving up"
+							Throw "Calling function - $($MyInvocation.MyCommand). Error in upload after $retry Attempt,Hence giving up"
 						}
 						elseif($returnCode -eq 0)
 						{
@@ -2132,7 +2124,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 				}
 				else
 				{
-					Throw "Failed to compress $files"
+					Throw "Calling function - $($MyInvocation.MyCommand). Failed to compress $files"
 					Remove-Item -Path $tarFileName -Force 2>&1 | Out-Null
 				}
 			}
@@ -2174,7 +2166,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 								if ( ($now - $uploadStartTime).TotalSeconds -gt 600 )
 								{
 									$uploadTimout = $true
-									LogErr "Upload Timout!"
+									LogError "Upload Timout!"
 								}
 								sleep -Seconds 1
 								$uploadJobStatus = Get-Job -Id $uploadJob.Id
@@ -2194,7 +2186,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 						{
 							Write-Host "Error in upload after $retry Attempt,Hence giving up"
 							$retry=$retry+1
-							Throw "Error in upload after $retry Attempt,Hence giving up"
+							Throw "Calling function - $($MyInvocation.MyCommand). Error in upload after $retry Attempt,Hence giving up"
 						}
 						elseif($returnCode -eq 0)
 						{
@@ -2208,7 +2200,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 		else
 		{
 			LogMsg "No Files to upload...!"
-			Throw "No Files to upload...!"
+			Throw "Calling function - $($MyInvocation.MyCommand). No Files to upload...!"
 		}
 
 	}
@@ -2243,7 +2235,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 							if ( ($now - $downloadStartTime).TotalSeconds -gt 600 )
 							{
 								$downloadTimout = $true
-								LogErr "Download Timout!"
+								LogError "Download Timout!"
 							}
 							sleep -Seconds 1
 							$downloadJobStatus = Get-Job -Id $downloadJob.Id
@@ -2283,7 +2275,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 							if ( ($now - $downloadStartTime).TotalSeconds -gt 600 )
 							{
 								$downloadTimout = $true
-								LogErr "Download Timout!"
+								LogError "Download Timout!"
 							}
 							sleep -Seconds 1
 							$downloadJobStatus = Get-Job -Id $downloadJob.Id
@@ -2324,7 +2316,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 					{
 						Write-Host "Error in download after $retry Attempt,Hence giving up"
 						$retry=$retry+1
-						Throw "Error in download after $retry Attempt,Hence giving up."
+						Throw "Calling function - $($MyInvocation.MyCommand). Error in download after $retry Attempt,Hence giving up."
 					}
 					elseif($returnCode -eq 0)
 					{
@@ -2337,7 +2329,7 @@ Function RemoteCopy($uploadTo, $downloadFrom, $downloadTo, $port, $files, $usern
 		else
 		{
 			LogMsg "No Files to download...!"
-			Throw "No Files to download...!"
+			Throw "Calling function - $($MyInvocation.MyCommand). No Files to download...!"
 		}
 	}
 	else
@@ -2528,29 +2520,29 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 				Remove-Job $runLinuxCmdJob 
 				if (!$isBackGroundProcessStarted)
 				{
-					LogErr "Failed to start process in background.."
+					LogError "Failed to start process in background.."
 				}
 				if ( $isBackGroundProcessTerminated )
 				{
-					LogErr "Background Process terminated from Linux side with error code :  $($LinuxExitCode.Split("-")[4])"
+					LogError "Background Process terminated from Linux side with error code :  $($LinuxExitCode.Split("-")[4])"
 					$returnCode = $($LinuxExitCode.Split("-")[4])
-					LogErr $SSHOut
+					LogError $SSHOut
 				}
 				if($debugOutput -imatch "Unable to authenticate")
 				{
 					LogMsg "Unable to authenticate. Not retrying!"
-					Throw "Unable to authenticate"
+					Throw "Calling function - $($MyInvocation.MyCommand). Unable to authenticate"
 
 				}
 				if($timeOut)
 				{
 					$retValue = ""
-					Throw "Tmeout while executing command : $command"
+					Throw "Calling function - $($MyInvocation.MyCommand). Tmeout while executing command : $command"
 				}
-				LogErr "Linux machine returned exit code : $($LinuxExitCode.Split("-")[4])"
+				LogError "Linux machine returned exit code : $($LinuxExitCode.Split("-")[4])"
 				if ($attempts -eq $maxRetryCount)
 				{
-					Throw "Failed to execute : $command."
+					Throw "Calling function - $($MyInvocation.MyCommand). Failed to execute : $command."
 				}
 				else
 				{
@@ -2651,14 +2643,14 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 					{
 						if($line)
 						{
-							LogErr $line
+							LogError $line
 						}
 					}
 				}
 				if($debugOutput -imatch "Unable to authenticate")
 					{
 						LogMsg "Unable to authenticate. Not retrying!"
-						Throw "Unable to authenticate"
+						Throw "Calling function - $($MyInvocation.MyCommand). Unable to authenticate"
 
 					}
 				if(!$ignoreLinuxExitCode)
@@ -2666,18 +2658,18 @@ Function RunLinuxCmd([string] $username,[string] $password,[string] $ip,[string]
 					if($timeOut)
 					{
 						$retValue = ""
-						LogErr "Tmeout while executing command : $command"
+						LogError "Tmeout while executing command : $command"
 					}
-					LogErr "Linux machine returned exit code : $($LinuxExitCode.Split("-")[4])"
+					LogError "Linux machine returned exit code : $($LinuxExitCode.Split("-")[4])"
 					if ($attemptswt -eq $maxRetryCount -and $attemptswot -eq $maxRetryCount)
 					{
-						Throw "Failed to execute : $command."
+						Throw "Calling function - $($MyInvocation.MyCommand). Failed to execute : $command."
 					}
 					else
 					{
 						if ($notExceededTimeLimit)
 						{
-							LogErr "Failed to execute : $command. Retrying..."
+							LogError "Failed to execute : $command. Retrying..."
 						}
 					}
 				}
@@ -2727,7 +2719,12 @@ Function DoTestCleanUp($result, $testName, $DeployedServices, $ResourceGroups, [
 			}
 			catch
 			{
-				LogErr "Ignorable error in collecting final data from VMs."
+				$line = $_.InvocationInfo.ScriptLineNumber
+				$script_name = ($_.InvocationInfo.ScriptName).Replace($PWD,".")
+				$ErrorMessage =  $_.Exception.Message
+				LogError "EXCEPTION : $ErrorMessage"
+				LogError "Source : Line $line in script $script_name."				
+				LogError "Ignorable error in collecting final data from VMs."
 			}
 			$currentTestBackgroundJobs = Get-Content $LogDir\CurrentTestBackgroundJobs.txt -ErrorAction SilentlyContinue
 			if ( $currentTestBackgroundJobs )
@@ -3048,8 +3045,8 @@ Function GetVMLogs($allVMData)
 		catch
 		{
 			$ErrorMessage =  $_.Exception.Message
-			LogErr "EXCEPTION : $ErrorMessage"
-			LogErr "Unable to collect logs from IP : $testIP PORT : $testPort"  		
+			LogError "EXCEPTION : $ErrorMessage"
+			LogError "Unable to collect logs from IP : $testIP PORT : $testPort"  		
 		}
 	}
 }
@@ -3188,7 +3185,7 @@ Function IperfClientServertcpNonConnectivity($server,$client)
 			}
 			else
 			{
-				LogErr "Connections observed on server. Test Finished..!"
+				LogError "Connections observed on server. Test Finished..!"
 				$testResult = "FAIL"
 			}
 		}
@@ -3196,7 +3193,7 @@ Function IperfClientServertcpNonConnectivity($server,$client)
 		{
 			$testResult = "FAIL"
 #LogMsg "Failured detected in client connection."
-			LogErr "Ohh, client connected.. Verifying that it connected to server.."
+			LogError "Ohh, client connected.. Verifying that it connected to server.."
 			$serverState = IsIperfServerRunning $server
 #$serverState = $false
 			if($serverState -eq $false)
@@ -3245,7 +3242,7 @@ Function IperfClientServerUDPNonConnectivity($server,$client)
 		}
 		else
 		{
-			LogErr "Connections observed on server. Test Finished..!"
+			LogError "Connections observed on server. Test Finished..!"
 			$testResult = "FAIL"
 		}
 	}
@@ -3287,7 +3284,7 @@ Function IperfClientServerUDPTest($server,$client)
 		}
 		else
 		{
-			LogErr "Connections not observed on server. Test Finished..!"
+			LogError "Connections not observed on server. Test Finished..!"
 			$testResult = "FAIL"
 		}
 	}
@@ -3333,7 +3330,7 @@ Function IperfClientServerTest($server,$client)
 		}
 		else
 		{
-			LogErr "Failured detected in client connection."
+			LogError "Failured detected in client connection."
 			LogMsg "Test Finished..!"
 			$testResult = "FAIL"
 		}
@@ -3371,7 +3368,7 @@ Function IperfClientServerTestParallel($server,$client)
 			}
 			else
 			{
-				LogErr "Test Finished ..!"
+				LogError "Test Finished ..!"
 				$testResult = "FAIL"
 			}
 			$clientLog= $client.LogDir + "\iperf-client.txt"
@@ -3398,29 +3395,29 @@ Function IperfClientServerTestParallel($server,$client)
 							LogMsg "Total DataTransfer is equal on both Server and Client"
 						} else {
 							$testResult = "FAIL"
-							LogErr "Total DataTransfer is NOT equal on both Server and Client"
+							LogError "Total DataTransfer is NOT equal on both Server and Client"
 						}
 					} else {
 						$testResult = "FAIL"
-						LogErr "Connection Counts are NOT Same in both Server and Client Logs"
+						LogError "Connection Counts are NOT Same in both Server and Client Logs"
 					}
 				} else {
 					$testResult = "FAIL"
-					LogErr "Server is not Connected to Client"
+					LogError "Server is not Connected to Client"
 				}
 			} else {
 				$testResult = "FAIL"
-				LogErr "Client is not Connected to Server"
+				LogError "Client is not Connected to Server"
 			}	
 		} else {
-			LogErr "Failures detected in client connection."
+			LogError "Failures detected in client connection."
 			RemoteCopy -download -downloadFrom $server.ip -files "/home/$user/iperf-server.txt" -downloadTo $server.LogDir -port $server.sshPort -username $server.user -password $server.password
 			LogMsg "Test Finished..!"
 			$testResult = "FAIL"
 		}
 
 	} else	{
-		LogErr "Unable to start iperf-server. Aborting test."
+		LogError "Unable to start iperf-server. Aborting test."
 		RemoteCopy -download -downloadFrom $server.ip -files "/home/$user/iperf-server.txt" -downloadTo $server.LogDir -port $server.sshPort -username $server.user -password $server.password
 		RemoteCopy -download -downloadFrom $client.ip -files "/home/$user/iperf-server.txt" -downloadTo $client.LogDir -port $client.sshPort -username $client.user -password $client.password
 		$testResult = "Aborted"
@@ -3458,7 +3455,7 @@ Function IperfClientServerUDPTestParallel($server,$client)
 			}
 			else
 			{
-				LogErr "Test Finished..!"
+				LogError "Test Finished..!"
 				$testResult = "FAIL"
 			}
 			$clientLog= $client.LogDir + "\iperf-client.txt"
@@ -3492,33 +3489,33 @@ Function IperfClientServerUDPTestParallel($server,$client)
 							LogMsg "UDP Loss is $udpLoss"
 							If ($udpLoss -gt 30) {
 								$testResult = "FAIL"
-								LogErr "UDP Loss $udpLoss is greater than 30%"
+								LogError "UDP Loss $udpLoss is greater than 30%"
 							} 
 						} else {
 							$testResult = "FAIL"
-							LogErr "DataTransfer Loss $dataLoss % is Less Than 30%"
+							LogError "DataTransfer Loss $dataLoss % is Less Than 30%"
 						}				
 					} else {
 						$testResult = "FAIL"
-						LogErr "Connection Counts are NOT Same in both Server and Client Logs"
+						LogError "Connection Counts are NOT Same in both Server and Client Logs"
 					}
 				} else {
 					$testResult = "FAIL"
-					LogErr "Server is not Connected to Client"
+					LogError "Server is not Connected to Client"
 				}
 			} else {
 				$testResult = "FAIL"
-				LogErr "Client is not Connected to Client"
+				LogError "Client is not Connected to Client"
 			}	
 		} else {
-			LogErr "Failured detected in client connection."
+			LogError "Failured detected in client connection."
 			RemoteCopy -download -downloadFrom $server.ip -files "/home/$user/iperf-server.txt" -downloadTo $server.LogDir -port $server.sshPort -username $server.user -password $server.password
 			LogMsg "Test Finished..!"
 			$testResult = "FAIL"
 		}
 
 	} else	{
-		LogErr "Unable to start iperf-server. Aborting test."
+		LogError "Unable to start iperf-server. Aborting test."
 		RemoteCopy -download -downloadFrom $server.ip -files "/home/$user/iperf-server.txt" -downloadTo $server.LogDir -port $server.sshPort -username $server.user -password $server.password
 		RemoteCopy -download -downloadFrom $client.ip -files "/home/$user/iperf-server.txt" -downloadTo $client.LogDir -port $client.sshPort -username $client.user -password $client.password
 		$testResult = "Aborted"
@@ -3565,24 +3562,24 @@ Function IperfClientServerUDPDatagramTest($server,$client, [switch] $VNET)
 				
 				if ($udpLoss -gt  30)
 				{
-					LogErr "UDP loss is greater than 30%"
+					LogError "UDP loss is greater than 30%"
 					$testResult = "FAIL"
 				}
 				if (!$isServerConnected)
 				{
-					LogErr "Server Not Connected. [Error source : Function IperfClientServerUDPDatagramTest]"
+					LogError "Server Not Connected. [Error source : Function IperfClientServerUDPDatagramTest]"
 					$testResult = "FAIL"
 				}
 			}
 			else
 			{
-				LogErr "Test Finished..!"
+				LogError "Test Finished..!"
 				$testResult = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Failured detected in client connection."
+			LogError "Failured detected in client connection."
 			LogMsg "Test Finished..!"
 			$testResult = "FAIL"
 		}
@@ -3664,11 +3661,11 @@ Function VerifyCustomProbe ($server1,$server2, [string] $probe) {
 					$testResult = "PASS"
 				} else {
 					if (!( IsCustomProbeMsgsPresent -logFile $server1Log -beg "Test Started" -end "TestComplete") ) {
-						LogErr "NO Custom Probe Messages observed on Server1"
+						LogError "NO Custom Probe Messages observed on Server1"
 						$testResult = "FAIL"
 					}
 					if (!(IsCustomProbeMsgsPresent -logFile $server2Log -beg "Test Started" -end "TestComplete")) {
-						LogErr "NO Custom Probe Messages observed on Server1"
+						LogError "NO Custom Probe Messages observed on Server1"
 						$testResult = "FAIL"
 					} 
 				}
@@ -3680,12 +3677,12 @@ Function VerifyCustomProbe ($server1,$server2, [string] $probe) {
 				} else {
 					if((IsCustomProbeMsgsPresent -logFile $server1Log -beg "Test Started" -end "TestComplete")) {
 						$server1CpConnCount = GetCustomProbeMsgsCount -logFile $server1Log -beg "Test Started" -end "TestComplete"
-						LogErr "$server1CpConnCount Custom Probe Messages observed on Server1"
+						LogError "$server1CpConnCount Custom Probe Messages observed on Server1"
 						$testResult = "FAIL"
 					} 
 					if((IsCustomProbeMsgsPresent -logFile $server2Log -beg "Test Started" -end "TestComplete")) {
 						$server2CpConnCount = GetCustomProbeMsgsCount -logFile $server2Log -beg "Test Started" -end "TestComplete"
-						LogErr "$server2CpConnCount Custom Probe Messages observed on Server2"
+						LogError "$server2CpConnCount Custom Probe Messages observed on Server2"
 						$testResult = "FAIL"
 					} 
 				}	
@@ -3812,21 +3809,21 @@ Function VerifyLBTCPConnectivity ($server1,$server2, $client, [string] $probe, [
 									LogMsg "Total DataTransfer is equal on both Server and Client"
 								} else {
 									$testResult = "FAIL"
-									LogErr "Total DataTransfer is NOT equal on both Server and Client"
+									LogError "Total DataTransfer is NOT equal on both Server and Client"
 								}
 							} else {
 								$testResult = "FAIL"
-								LogErr "Connection Counts are not distributed correctly"
-								LogErr "Diff between server1 and server2 is $diff"
+								LogError "Connection Counts are not distributed correctly"
+								LogError "Diff between server1 and server2 is $diff"
 							}
 						} else {
 							if (!( IsCustomProbeMsgsPresent -logFile $server1Log -beg "Test Started" -end "TestComplete") ) {
-								LogErr "NO Custom Probe Messages observed on Server1"
+								LogError "NO Custom Probe Messages observed on Server1"
 								$testResult = "FAIL"
 							}
 							if (!(IsCustomProbeMsgsPresent -logFile $server2Log -beg "Test Started" -end "TestComplete")) {
 								$server2CpConnCount= GetCustomProbeMsgsCount -logFile $server2Log -beg "Test Started" -end "TestComplete"
-								LogErr "$server2CpConnCount Custom Probe Messages observed on Server1"
+								LogError "$server2CpConnCount Custom Probe Messages observed on Server1"
 								$testResult = "FAIL"
 							} 
 						}
@@ -3855,22 +3852,22 @@ Function VerifyLBTCPConnectivity ($server1,$server2, $client, [string] $probe, [
 									LogMsg "Total DataTransfer is equal on both Server and Client"
 								} else {
 									$testResult = "FAIL"
-									LogErr "Total DataTransfer is NOT equal on both Server and Client"
+									LogError "Total DataTransfer is NOT equal on both Server and Client"
 								}
 							} else {
 								$testResult = "FAIL"
-								LogErr "Connection Counts are not distributed correctly"
-								LogErr "Diff between server1 and server2 is $diff"
+								LogError "Connection Counts are not distributed correctly"
+								LogError "Diff between server1 and server2 is $diff"
 							}
 						} else {
 							if((IsCustomProbeMsgsPresent -logFile $server1Log -beg "Test Started" -end "TestComplete")) {
 								$server1CpConnCount = GetCustomProbeMsgsCount -logFile $server1Log -beg "Test Started" -end "TestComplete"
-								LogErr "$server1CpConnCount Custom Probe Messages observed on Server1"
+								LogError "$server1CpConnCount Custom Probe Messages observed on Server1"
 								$testResult = "FAIL"
 							} 
 							if((IsCustomProbeMsgsPresent -logFile $server2Log -beg "Test Started" -end "TestComplete")) {
 								$server2CpConnCount = GetCustomProbeMsgsCount -logFile $server2Log -beg "Test Started" -end "TestComplete"
-								LogErr "$server2CpConnCount Custom Probe Messages observed on Server2"
+								LogError "$server2CpConnCount Custom Probe Messages observed on Server2"
 								$testResult = "FAIL"
 							} 
 						}
@@ -3878,14 +3875,14 @@ Function VerifyLBTCPConnectivity ($server1,$server2, $client, [string] $probe, [
 
 				}	else {
 					$testResult = "FAIL"
-					LogErr "Server is not Connected to Client"
+					LogError "Server is not Connected to Client"
 				}
 			} else {
 				$testResult = "FAIL"
-				LogErr "Client is not Connected to Client"
+				LogError "Client is not Connected to Client"
 			}	
 		} else {
-			LogErr "Failured detected in client connection."
+			LogError "Failured detected in client connection."
 			RemoteCopy -download -downloadFrom $server1.ip -files "/home/$user/iperf-server.txt" -downloadTo $server1.LogDir -port $server1.sshPort -username $server1.user -password $server1.password
 			LogMsg "Test Finished..!"
 			$testResult = "FAIL"
@@ -4117,7 +4114,7 @@ Function DoNslookupTest ($vm1, $vm2)
 	{
 		$testResult = "FAIL"
 		$nslookupError = GetStringMatchObject -logFile $nslookuplog12 -beg TestStarted -end TestCompleted -str "server can`'t find"
-		LogErr "NSLOOKUP FAILED : $nslookupError"
+		LogError "NSLOOKUP FAILED : $nslookupError"
 	}
 	LogMsg "NSLOOKUP Result : $testResult"
 	return $testResult
@@ -4150,7 +4147,7 @@ Function DoDigTest ($vm1, $vm2)
 	else
 	{
 		$testResult = "FAIL"
-		LogErr "DIG Result : DIP NOT RESOLVED. : FAIL"
+		LogError "DIG Result : DIP NOT RESOLVED. : FAIL"
 	}
 	return $testResult
 }
@@ -4166,7 +4163,7 @@ Function GetVMFQDN ($vm)
 	}
 	else
 	{
-		Throw "Unable to get VM FQDN.."
+		Throw "Calling function - $($MyInvocation.MyCommand). Unable to get VM FQDN.."
 	}
 }
 
@@ -4293,7 +4290,7 @@ Function AnalyseIperfServerConnectivity([string] $logFile,[string] $beg,[string]
 	If($match) {
 		$RefusedConnections = GetStringMatchCount -logFile $logFile -beg $beg -end $end -str "Connection refused"
 		if($RefusedConnections -gt 0){
-			LogErr "Server connected to client. But `"Connection Refused`" observed $RefusedConnections times in the logs. Marking test as FAIL."
+			LogError "Server connected to client. But `"Connection Refused`" observed $RefusedConnections times in the logs. Marking test as FAIL."
 			return $false
 		}
 		else{
@@ -4302,7 +4299,7 @@ Function AnalyseIperfServerConnectivity([string] $logFile,[string] $beg,[string]
 		}
 	}
 	else {
-		LogErr "Server connection Fails!"
+		LogError "Server connection Fails!"
 		return $false
 	}
 }
@@ -4318,38 +4315,38 @@ Function AnalyseIperfClientConnectivity([string] $logFile,[string] $beg,[string]
 		If($match) 
 		{
 			$failure = $failure + 1
-			LogErr "Client connected with some failed connections!"
+			LogError "Client connected with some failed connections!"
 		}	
 		$match = IsContainString -logFile $logFile -beg $beg -end $end -str "error"	
 		If($match)
 		{
 			$failure = $failure + 1
-			LogErr "There were some errors in the connections!"
+			LogError "There were some errors in the connections!"
 		}
 		$match = IsContainString -logFile $logFile -beg $beg -end $end -str "refused"	
 		If($match)
 		{
 			$failure = $failure + 1
-			LogErr "Some connections were refused!" 
+			LogError "Some connections were refused!" 
 		}
 		$match = IsContainString -logFile $logFile -beg $beg -end $end -str "Broken pipe"	
 		If($match)
 		{
 			$failure = $failure + 1
-			LogErr "Broken Pipe Message observed in Iperf Client Output" 
+			LogError "Broken Pipe Message observed in Iperf Client Output" 
 		}
 		$match = IsContainString -logFile $logFile -beg $beg -end $end -str "TestIncomplete"	
 		If($match)
 		{
 			$failure = $failure + 1
-			LogErr "Client was successfully connected to server but, client process failed to exit!" 
+			LogError "Client was successfully connected to server but, client process failed to exit!" 
 		}
 		if ($failure -eq 0)
 		{
 			LogMsg "Client was successfully connected to server"
 			return $true
 		} else {
-			LogErr "Client connection fails"
+			LogError "Client connection fails"
 			return $false
 		}
 	} 
@@ -4357,26 +4354,26 @@ Function AnalyseIperfClientConnectivity([string] $logFile,[string] $beg,[string]
 	{
 		$match = IsContainString -logFile $logFile -beg $beg -end $end -str "No address associated"	
 		If($match) {
-			LogErr "Client was not connected to server!"
-			LogErr "No address associated with hostname"
+			LogError "Client was not connected to server!"
+			LogError "No address associated with hostname"
 			return $false
 		} 
 		elseif (($match= IsContainString -logFile $logFile -beg $beg -end $end -str "Connection refused"))
 		{
-			LogErr "Client was not connected to server."
-			LogErr "Connection refused by the server."
+			LogError "Client was not connected to server."
+			LogError "Connection refused by the server."
 			return $false
 		}
 		elseif (($match= IsContainString -logFile $logFile -beg $beg -end $end -str "Name or service not known"))
 		{
-			LogErr "Client was not connected to server."
-			LogErr "Name or service not known."
+			LogError "Client was not connected to server."
+			LogError "Name or service not known."
 			return $false
 		} 
 		else
 		{
-			LogErr "Client was not connected to server."
-			LogErr "Unlisted error. Check logs for more information...!."
+			LogError "Client was not connected to server."
+			LogError "Unlisted error. Check logs for more information...!."
 			return $false
 		}
 	}
@@ -4863,7 +4860,7 @@ Function ConfigureDnsServer($intermediateVM, $DnsServer, $HostnameDIPDetails, $v
 	}
 	else
 	{
-		Throw "DNS server configuration failed."
+		Throw "Calling function - $($MyInvocation.MyCommand). DNS server configuration failed."
 	}
 }
 
@@ -4938,7 +4935,7 @@ Function RunLinuxCmdOnRemoteVM($intermediateVM,$remoteVM, [switch] $runAsSudo, $
 		else
 		{
 			Write-host $remoteOutput
-			Throw "$remoteCommand Failed to execute on $($remoteVM.ip)."
+			Throw "Calling function - $($MyInvocation.MyCommand). $remoteCommand Failed to execute on $($remoteVM.ip)."
 		}
 	}
 	return $remoteOutput
@@ -4969,13 +4966,13 @@ Function RemoteCopyRemoteVM($intermediateVM,$remoteVM,$remoteFiles, [switch]$upl
 
 		if ($uploadErrorCount -gt 0)
 		{
-			LogErr $uploadOutput
-			Throw "Failed to upload $uploadErrorCount files to $($remoteVM.ip)"
+			LogError $uploadOutput
+			Throw "Calling function - $($MyInvocation.MyCommand). Failed to upload $uploadErrorCount files to $($remoteVM.ip)"
 		}
 		elseif ($uploadCount -ne $fileCount)
 		{
-			LogErr $uploadOutput
-			Throw "File count doensn't match"
+			LogError $uploadOutput
+			Throw "Calling function - $($MyInvocation.MyCommand). File count doensn't match"
 		}
 		else
 		{
@@ -5000,13 +4997,13 @@ Function RemoteCopyRemoteVM($intermediateVM,$remoteVM,$remoteFiles, [switch]$upl
 		$downloadErrorCount = ($downloadOutput.Split("`n") -match "...Error!").Length
 		if ($downloadErrorCount -gt 0)
 		{
-			LogErr $downloadOutput
-			Throw "Failed to download $downloadErrorCount files to $($remoteVM.ip)"
+			LogError $downloadOutput
+			Throw "Calling function - $($MyInvocation.MyCommand). Failed to download $downloadErrorCount files to $($remoteVM.ip)"
 		}
 		elseif ($downloadCount -ne $fileCount)
 		{
-			LogErr $downloadOutput
-			Throw "File count doensn't match"
+			LogError $downloadOutput
+			Throw "Calling function - $($MyInvocation.MyCommand). File count doensn't match"
 		}
 		else
 		{
@@ -5034,8 +5031,8 @@ Function ConfigureVNETVMs($SSHDetails,$vnetDomainDBFilePath,$dnsServerIP)
 		}
 		else
 		{
-			LogErr $out
-			Throw "$testIP : $testPort ConfigureResolvConf.py failed..."
+			LogError $out
+			Throw "Calling function - $($MyInvocation.MyCommand). $testIP : $testPort ConfigureResolvConf.py failed..."
 		}
 
 #Enable TCP MTU probing, requried for using WS2012 RRAS as VPN device
@@ -5117,7 +5114,7 @@ Function VerifyDIPafterInitialDeployment($DeployedServices)
 			}
 			else
 			{
-				LogErr "INCORRECT DIP DETAIL : $($VM.Name)"
+				LogError "INCORRECT DIP DETAIL : $($VM.Name)"
 				$ErrCount = $ErrCount + 1
 			}
 		}
@@ -5158,7 +5155,7 @@ Function VerifyDNSServerInResolvConf($DeployedServices, $dnsServerIP)
 			}
 			else
 			{
-				LogErr "INCORRECT DNS SERVER IP : $($VM.Name)"
+				LogError "INCORRECT DNS SERVER IP : $($VM.Name)"
 				$ErrCount = $ErrCount + 1
 			}
 		}
@@ -5201,7 +5198,7 @@ Function RestartAllDeployments($allVMData)
 			}
 			else
 			{
-				LogErr "FAILED TO RESTART : $($vmData.RoleName)"
+				LogError "FAILED TO RESTART : $($vmData.RoleName)"
 				$retryCount = $retryCount + 1
 				if ($retryCount -gt 0)
 				{
@@ -5209,7 +5206,7 @@ Function RestartAllDeployments($allVMData)
 				}
 				if ($retryCount -eq 0)
 				{
-					Throw "Unable to Restart : $($vmData.RoleName)"
+					Throw "Calling function - $($MyInvocation.MyCommand). Unable to Restart : $($vmData.RoleName)"
 				}
 			}
 		}
@@ -5262,7 +5259,7 @@ Function ResizeAllVMs($allVMData, $newVMSize)
 			}
 			else
 			{
-				LogErr "FAILED TO RESIZE : $($vmData.RoleName)"
+				LogError "FAILED TO RESIZE : $($vmData.RoleName)"
 				$retryCount = $retryCount + 1
 				if ($retryCount -gt 0)
 				{
@@ -5270,7 +5267,7 @@ Function ResizeAllVMs($allVMData, $newVMSize)
 				}
 				if ($retryCount -eq 0)
 				{
-					Throw "Unable to Restart : $($vmData.RoleName)"
+					Throw "Calling function - $($MyInvocation.MyCommand). Unable to Restart : $($vmData.RoleName)"
 				}
 			}
 		}
@@ -5310,7 +5307,7 @@ Function StopAllDeployments($DeployedServices)
 				}
 				else
 				{
-					LogErr "FAILED TO STOP : $($VM.Name)"
+					LogError "FAILED TO STOP : $($VM.Name)"
 					$retryCount = $retryCount + 1
 					if ($retryCount -gt 0)
 					{
@@ -5319,7 +5316,7 @@ Function StopAllDeployments($DeployedServices)
 					if ($retryCount -eq 0)
 					{
 						$retValue = $false
-						Throw "Unable to Restart : $($VM.Name)"
+						Throw "Calling function - $($MyInvocation.MyCommand). Unable to Restart : $($VM.Name)"
 					}
 				}
 			}
@@ -5353,7 +5350,7 @@ Function StartAllDeployments($DeployedServices)
 				}
 				else
 				{
-					LogErr "FAILED TO START : $($VM.Name)"
+					LogError "FAILED TO START : $($VM.Name)"
 					$retryCount = $retryCount + 1
 					if ($retryCount -gt 0)
 					{
@@ -5361,7 +5358,7 @@ Function StartAllDeployments($DeployedServices)
 					}
 					if ($retryCount -eq 0)
 					{
-						Throw "Unable to Start : $($VM.Name)"
+						Throw "Calling function - $($MyInvocation.MyCommand). Unable to Start : $($VM.Name)"
 					}
 				}
 			}
@@ -5379,13 +5376,13 @@ Function StartAllDeployments($DeployedServices)
 		}
 		else
 		{
-			LogErr "Unable to connect Some/All SSH ports.."
+			LogError "Unable to connect Some/All SSH ports.."
 			$retValue = "False"  
 		}
 	}
 	else
 	{
-		LogErr "Provision Failed for one or more VMs"
+		LogError "Provision Failed for one or more VMs"
 		$retValue = "False"
 	}
 
@@ -5527,7 +5524,7 @@ Function VerifyGatewayVMsInHostedService($DeployedServices)
 			}
 			else
 			{
-				LogErr "FAIL"
+				LogError "FAIL"
 				$ErrCount = $ErrCount + 1
 			}
 		}
@@ -5719,7 +5716,7 @@ Function DoNfsShareAccessTest ($fromVM, $nfsServer, $nfsServerDirctory, [switch]
 	}
 	catch
 	{
-		LogErr "Failed."
+		LogError "Failed."
 		$retValue = "FAIL"
 	}
 	return $retValue
@@ -5749,7 +5746,7 @@ Function DoNfsShareFileTranferTest ($fromVM, $nfsServer, $nfsServerDirctory, [sw
 	}
 	catch
 	{
-		LogErr "Failed."
+		LogError "Failed."
 		$retValue = "FAIL"
 	}
 	return $retValue
@@ -5838,7 +5835,7 @@ Function StartIperfServerOnRemoteVM($remoteVM, $intermediateVM, $expectedServerI
 	else
 	{
 		$retValue = "False"
-		LogErr "Server Failed to start ..."
+		LogError "Server Failed to start ..."
 	}
 
 	<#if(($isServerStarted -imatch "yes") -and ($CommandOutput -imatch "ExitCode : 0"))
@@ -5849,7 +5846,7 @@ Function StartIperfServerOnRemoteVM($remoteVM, $intermediateVM, $expectedServerI
 	else
 	{
 		$retValue = "False"
-		LogErr "Server Failed to start ..."
+		LogError "Server Failed to start ..."
 	}#>
 	return $retValue
 }
@@ -5916,13 +5913,13 @@ Function IperfLocalToVNETUdpTest ($vnetAsServer, $localAsClient, $intermediateVM
 		}
 		else
 		{
-			LogErr "Client failed to connect to server..."
+			LogError "Client failed to connect to server..."
 			$retValue = "Fail"
 		}
 	}
 	else
 	{
-		LogErr "Failed to start iperf server."
+		LogError "Failed to start iperf server."
 		$retValue = "Fail"
 	}
 	return $retValue
@@ -5958,13 +5955,13 @@ Function IperfVnetToLocalUdpTest ($vnetAsClient, $localAsServer)
 		}
 		else
 		{
-			LogErr "Client failed to connect to server..."
+			LogError "Client failed to connect to server..."
 			$retValue = "Fail"
 		}
 	}
 	else
 	{
-		LogErr "Failed to start iperf server."
+		LogError "Failed to start iperf server."
 		$retValue = "Fail"
 	}
 	return $retValue
@@ -6119,8 +6116,8 @@ Function PerformIOTestOnDisk($testVMObject, [string]$attachedDisk, [string]$disk
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	return $retValue
@@ -6203,21 +6200,21 @@ Function DoHotAddNewDataDiskTest ($testVMObject, [int]$diskSizeInGB )
 			}
 			else
 			{
-				LogErr "VM Status : OFF."
-				LogErr "VM is not Alive after adding new disk."
+				LogError "VM Status : OFF."
+				LogError "VM is not Alive after adding new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Failed to Attach disk."
+			LogError "Failed to Attach disk."
 			$retValue = "FAIL"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------ADD DISK TO LUN $testLun : END : $retValue----------------------" -Path $HotAddLogFile 
@@ -6270,7 +6267,7 @@ Function DoHotRemoveDataDiskTest ($testVMObject)
 					}
 					else
 					{
-						LogErr "Disk can be still visible in VM."
+						LogError "Disk can be still visible in VM."
 						WaitFor -seconds 10
 						$retValue = "FAIL"
 						$retryCount += 1
@@ -6282,20 +6279,20 @@ Function DoHotRemoveDataDiskTest ($testVMObject)
 			else
 			{
 				LogMsg "VM Status : OFF."
-				LogErr "VM is not Alive after removing new disk."
+				LogError "VM is not Alive after removing new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Failed to remove disk."
+			LogError "Failed to remove disk."
 			$retValue = "FAIL"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------REMOVE DISK FROM LUN $testLun : END : $retValue----------------------" -Path $HotRemoveLogFile -Encoding UTF8
@@ -6382,7 +6379,7 @@ Function DoHotAddNewDataDiskTestParallel ($testVMObject, $TotalLuns)
 							}
 							else
 							{
-								LogErr "IO Operations failed for $newDisk"
+								LogError "IO Operations failed for $newDisk"
 								$errorCount += 1
 							}
 						}
@@ -6393,13 +6390,13 @@ Function DoHotAddNewDataDiskTestParallel ($testVMObject, $TotalLuns)
 						else
 						{
 							$retValue = "FAIL"
-							LogErr "I/O operations on $errorCount disks."
+							LogError "I/O operations on $errorCount disks."
 						}
 					}
 					else
 					{
 						$NotDetectedDisks = ( ($disksBeforeAddingNewDisk + $TotalLuns) - $disksafterAddingNewDisk )
-						LogErr "Total undetected disks : $NotDetectedDisks"
+						LogError "Total undetected disks : $NotDetectedDisks"
 						WaitFor -seconds 10
 						$isAllDiskDetected = "FAIL"
 						$retryCount += 1
@@ -6412,20 +6409,20 @@ Function DoHotAddNewDataDiskTestParallel ($testVMObject, $TotalLuns)
 			else
 			{
 				LogMsg "VM Status : OFF."
-				LogErr "VM is not Alive after adding new disk."
+				LogError "VM is not Alive after adding new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Failed to attach disks."
+			LogError "Failed to attach disks."
 			$retValue = "FAIL"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------ADD DISK TO LUN $testLun : END : $retValue----------------------" -Path $HotAddLogFile 
@@ -6496,7 +6493,7 @@ Function DoHotRemoveNewDataDiskTestParallel ($testVMObject, $TotalLuns)
 					else
 					{
 						$UnexpectedDisks = ( $disksafterRemovingNewDisk - ($disksBeforeRemovingNewDisk - $TotalLuns) )
-						LogErr "Total unexpected disks : $UnexpectedDisks"
+						LogError "Total unexpected disks : $UnexpectedDisks"
 						WaitFor -seconds 10
 						$retValue = "FAIL"
 						$retryCount += 1
@@ -6509,21 +6506,21 @@ Function DoHotRemoveNewDataDiskTestParallel ($testVMObject, $TotalLuns)
 			else
 			{
 				LogMsg "VM Status : OFF."
-				LogErr "VM is not Alive after adding new disk."
+				LogError "VM is not Alive after adding new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Error in  removing disks."
-			LogErr "Aborting Test."
+			LogError "Error in  removing disks."
+			LogError "Aborting Test."
 			$retValue = "Aborted"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------REMOVE $testLun DISKS : END : $retValue----------------------" -Path $HotRemoveLogFile 
@@ -6594,7 +6591,7 @@ Function DoHotAddExistingDataDiskTest($testVMObject)
 					}
 					else
 					{
-						LogErr "Existing disk not detected."
+						LogError "Existing disk not detected."
 						WaitFor -seconds 10
 						$newDiskAdded = "FAIL"
 						$retryCount += 1
@@ -6607,21 +6604,21 @@ Function DoHotAddExistingDataDiskTest($testVMObject)
 			else
 			{
 				LogMsg "VM Status : OFF."
-				LogErr "VM is not Alive after adding new disk."
+				LogError "VM is not Alive after adding new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Error while attaching disk."
-			LogErr "Aborting Test."
+			LogError "Error while attaching disk."
+			LogError "Aborting Test."
 			$retValue = "Aborted"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------ADD EXISTING DISK TO LUN $testLun : END : $retValue----------------------" -Path $HotAddLogFile 
@@ -6707,7 +6704,7 @@ Function DoHotAddExistingDataDiskTestParallel ($testVMObject, $TotalLuns)
 							}
 							else
 							{
-								LogErr "IO Operations failed for $newDisk"
+								LogError "IO Operations failed for $newDisk"
 								$errorCount += 1
 							}
 						}
@@ -6718,13 +6715,13 @@ Function DoHotAddExistingDataDiskTestParallel ($testVMObject, $TotalLuns)
 						else
 						{
 							$retValue = "FAIL"
-							LogErr "I/O operations on $errorCount disks."
+							LogError "I/O operations on $errorCount disks."
 						}
 					}
 					else
 					{
 						$NotDetectedDisks = ( ($disksBeforeAddingNewDisk + $TotalLuns) - $disksafterAddingNewDisk )
-						LogErr "Total undetected disks : $NotDetectedDisks"
+						LogError "Total undetected disks : $NotDetectedDisks"
 						WaitFor -seconds 10
 						$isAllDiskDetected = "FAIL"
 						$retryCount += 1
@@ -6737,21 +6734,21 @@ Function DoHotAddExistingDataDiskTestParallel ($testVMObject, $TotalLuns)
 			else
 			{
 				LogMsg "VM Status : OFF."
-				LogErr "VM is not Alive after adding new disk."
+				LogError "VM is not Alive after adding new disk."
 				$retValue = "FAIL"
 			}
 		}
 		else
 		{
-			LogErr "Error in Attaching disks.."
-			LogErr "Aborting Test."
+			LogError "Error in Attaching disks.."
+			LogError "Aborting Test."
 			$retValue = "Aborted"
 		}
 	}
 	else
 	{
-		LogErr "VM is not Alive."
-		LogErr "Aborting Test."
+		LogError "VM is not Alive."
+		LogError "Aborting Test."
 		$retValue = "Aborted"
 	}
 	Add-Content  -Value "--------------------ADD EXISTING $TotalLuns DISKS : END : $retValue----------------------" -Path $HotAddLogFile 
@@ -6857,7 +6854,7 @@ Function CleanUpExistingDiskReferences($ExistingDiskMediaLinks)
 					}
 					catch
 					{
-						LogErr "Operation : Break Reference : FAILED"
+						LogError "Operation : Break Reference : FAILED"
 						$exceptionGenerated = $true
 					}
 				}
@@ -6869,7 +6866,7 @@ Function CleanUpExistingDiskReferences($ExistingDiskMediaLinks)
 				}
 				else
 				{
-					LogErr "Operation : Break Reference : FAILED"
+					LogError "Operation : Break Reference : FAILED"
 					$BreakReferenceFailCounter += 1
 					$UnableToBreakDisks += $diskToBreakReference
 				}
@@ -6884,11 +6881,11 @@ Function CleanUpExistingDiskReferences($ExistingDiskMediaLinks)
 				$retValue = $false
 				foreach ($detachDisk in $UnableToDetachDisks)
 				{
-					LogErr "Unable to detach : $(($detachDisk).ToUpper())"
+					LogError "Unable to detach : $(($detachDisk).ToUpper())"
 				}
 				foreach ($breakDisk in $UnableToBreakDisks)
 				{
-					LogErr "Unable to Break Reference : $(($breakDisk).ToUpper())"
+					LogError "Unable to Break Reference : $(($breakDisk).ToUpper())"
 				}
 				WaitFor -seconds 15
 			}
@@ -6966,7 +6963,7 @@ Function RetryOperation($operation, $description, $expectResult=$null, $maxRetry
 		}
 		if ($retryCount -ge $maxRetryCount)
 		{
-			LogErr "Opearation Failed." 
+			LogError "Opearation Failed." 
 			break;
 		}
 	} while ($True)
