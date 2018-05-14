@@ -1,35 +1,39 @@
-cd D:\GitHub\azure-linux-automation
+
+Param(
+    $DestinationPath = "D:\GitHub\azure-linux-automation\temp"
+)
+
 Get-ChildItem .\TestLibs\*.psm1 | ForEach-Object { Import-Module $_.FullName -Force}
-#ValiateXMLs -ParentFolder "D:\GitHub\azure-linux-automation"
+ValiateXMLs -ParentFolder ".\"
 
-$xmlText = Get-Content .\XML\Tests\*.xml
-
+$xmlData = @()
+foreach ( $file in (Get-ChildItem -Path .\XML\Tests\*.xml ))
+{
+    $xmlData += ([xml](Get-Content -Path $file.FullName)).TestCases
+}
 $TestToRegionMapping = ([xml](Get-Content .\XML\TestToRegionMapping.xml))
-
-$xmlData = [xml]$xmlText
-
 #Get Unique Platforms
-$Platforms = $xmlData.TestCases.test.Platform.Split(',')  | Sort-Object | Get-Unique
+$Platforms = $xmlData.test.Platform.Split(',')  | Sort-Object | Get-Unique
 Write-Host $Platforms
-$Categories = $xmlData.TestCases.test.Category | Sort-Object | Get-Unique
+$Categories = $xmlData.test.Category | Sort-Object | Get-Unique
 Write-Host $Categories
-$Areas =$xmlData.TestCases.test.Area | Sort-Object | Get-Unique
+$Areas =$xmlData.test.Area | Sort-Object | Get-Unique
 Write-Host $Areas
-$Tags =$xmlData.TestCases.test.Tags.Split(",") | Sort-Object | Get-Unique
+$Tags =$xmlData.test.Tags.Split(",") | Sort-Object | Get-Unique
 Write-Host $Tags
-$TestNames = $xmlData.TestCases.test.TestName | Sort-Object | Get-Unique
+$TestNames = $xmlData.testName | Sort-Object | Get-Unique
 Write-Host $TestNames
 
 
-$jenkinsFile =  "platform`tcategory`tarea`tregion`n"
+$JenkinsMenuFile =  "platform`tcategory`tarea`tregion`n"
 #Generate Jenkins File
 foreach ( $platform in $Platforms )
 {
-    $Categories = ($xmlData.TestCases.test | Where-Object { $_.Platform.Contains($platform) }).Category
+    $Categories = ($xmlData.test | Where-Object { $_.Platform.Contains($platform) }).Category
     foreach ( $category in $Categories)
     {
         $Regions =$TestToRegionMapping.enabledRegions.global.Split(",")
-        $Areas = ($xmlData.TestCases.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" }).Area
+        $Areas = ($xmlData.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" }).Area
         if ( $TestToRegionMapping.enabledRegions.Category.$category )
         {
             $Regions = ($TestToRegionMapping.enabledRegions.Category.$category).Split(",")
@@ -45,7 +49,6 @@ foreach ( $platform in $Platforms )
             }
             else
             {
-                Write-Host "Constrained Category $category"
                 $Regions = ($TestToRegionMapping.enabledRegions.Category.$category).Split(",")
                 if ( $TestToRegionMapping.enabledRegions.Area.$area )
                 {
@@ -72,14 +75,14 @@ foreach ( $platform in $Platforms )
             }
             foreach ( $region in $Regions)
             {
-                $jenkinsFile += "$platform`t$category`t$area`t$region`n"
+                $JenkinsMenuFile += "$platform`t$category`t$area`t$platform>>$category>>$area>>$region`n"
             }
         }
         if ( $(($Areas | Get-Unique).Count) -gt 1)
         {
             foreach ( $region in $Regions)
             {
-                $jenkinsFile += "$platform`t$category`tAll`t$region`n"
+                $JenkinsMenuFile += "$platform`t$category`tAll`t$platform>>$category>>All>>$region`n"
             }
         }
     }
@@ -87,13 +90,13 @@ foreach ( $platform in $Platforms )
     {
         foreach ( $region in $Regions)
         {
-            $jenkinsFile += "$platform`tAll`tAll`t$region`n"
+            $JenkinsMenuFile += "$platform`tAll`tAll`t$platform>>All>>All>>$region`n"
         }
     }
 }
 
-Set-Content -Value $jenkinsFile -Path .\jenkinsfile -Force
-(Get-Content .\jenkinsfile) | Where-Object {$_.trim() -ne "" } | set-content .\jenkinsfile
+Set-Content -Value $JenkinsMenuFile -Path "$DestinationPath\JenkinsMenuFile.txt" -Force
+(Get-Content "$DestinationPath\JenkinsMenuFile.txt") | Where-Object {$_.trim() -ne "" } | set-content "$DestinationPath\JenkinsMenuFile.txt"
 
 
 $tagsFile = "platform`ttag`tregion`n"
@@ -115,8 +118,8 @@ foreach ( $platform in $Platforms )
         }
     }
 }
-Set-Content -Value $tagsFile -Path .\tagsFile -Force
-(Get-Content .\tagsFile) | Where-Object {$_.trim() -ne "" } | set-content .\tagsFile
+Set-Content -Value $tagsFile -Path "$DestinationPath\JenkinsMenuFile4.txt" -Force
+(Get-Content "$DestinationPath\JenkinsMenuFile4.txt") | Where-Object {$_.trim() -ne "" } | set-content "$DestinationPath\JenkinsMenuFile4.txt"
 
 
 $testnameFile = "platform`ttestname`tregion`n"
@@ -138,20 +141,20 @@ foreach ( $platform in $Platforms )
         }
     }
 }
-Set-Content -Value $testnameFile -Path .\testnameFile -Force
-(Get-Content .\testnameFile) | Where-Object {$_.trim() -ne "" } | set-content .\testnameFile
+Set-Content -Value $testnameFile -Path "$DestinationPath\JenkinsMenuFile3.txt" -Force
+(Get-Content "$DestinationPath\JenkinsMenuFile3.txt") | Where-Object {$_.trim() -ne "" } | set-content "$DestinationPath\JenkinsMenuFile3.txt"
 
 
 
-$jenkinsFile2 =  "platform`tcategory`tarea`ttestname`tregion`n"
+$JenkinsMenuFile2 =  "platform`tcategory`tarea`ttestname`tregion`n"
 #Generate Jenkins File
 foreach ( $platform in $Platforms )
 {
-    $Categories = ($xmlData.TestCases.test | Where-Object { $_.Platform.Contains($platform) }).Category
+    $Categories = ($xmlData.test | Where-Object { $_.Platform.Contains($platform) }).Category
     foreach ( $category in $Categories)
     {
         $Regions =$TestToRegionMapping.enabledRegions.global.Split(",")
-        $Areas = ($xmlData.TestCases.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" }).Area
+        $Areas = ($xmlData.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" }).Area
         if ( $TestToRegionMapping.enabledRegions.Category.$category )
         {
             $Regions = ($TestToRegionMapping.enabledRegions.Category.$category).Split(",")
@@ -189,7 +192,7 @@ foreach ( $platform in $Platforms )
                     }
                 }
             }
-            $TestNames = ($xmlData.TestCases.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" } | Where-Object { $_.Area -eq "$area" } ).TestName
+            $TestNames = ($xmlData.test | Where-Object { $_.Platform.Contains($platform) } | Where-Object { $_.Category -eq "$category" } | Where-Object { $_.Area -eq "$area" } ).TestName
             foreach ( $testname in $TestNames )
             {
                 $Regions =$TestToRegionMapping.enabledRegions.global.Split(",")
@@ -200,17 +203,16 @@ foreach ( $platform in $Platforms )
                 foreach ( $region in $Regions)
                 {
                     #Write-Host "$platform`t$category`t$area`t$testname`t$region"
-                    $jenkinsFile2 += "$platform`t$category`t$area`t$testname`t$region`n"
+                    $JenkinsMenuFile2 += "$platform`t$category`t$area`t$testname`t$platform>>$category>>$area>>$testname>>$region`n"
                 }
             }
         }
     }
 }
 Write-Host "Setting Content"
-Set-Content -Value $jenkinsFile2 -Path .\jenkinsfile2 -Force
+Set-Content -Value $JenkinsMenuFile2 -Path "$DestinationPath\JenkinsMenuFile2.txt" -Force
 Write-Host "Replacing whitespaces"
-(Get-Content .\jenkinsfile2) | Where-Object {$_.trim() -ne "" } | set-content .\jenkinsfile2
+(Get-Content "$DestinationPath\JenkinsMenuFile2.txt") | Where-Object {$_.trim() -ne "" } | set-content "$DestinationPath\JenkinsMenuFile2.txt"
 Write-Host "Completed."
 
-cd D:\GitHub\azure-linux-automation
 exit 0

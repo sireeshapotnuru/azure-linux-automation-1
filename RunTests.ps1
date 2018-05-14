@@ -89,6 +89,22 @@ try
     $allTests = @()
     $ARMImage = $ARMImageName.Split(" ")
     $xmlFile = "$WorkingDirectory\TestConfiguration.xml"
+    if ( $TestCategory -eq "All")
+    {
+        $TestCategory = ""
+    }
+    if ( $TestArea -eq "All")
+    {
+        $TestArea = ""
+    }
+    if ( $TestNames -eq "All")
+    {
+        $TestNames = ""
+    }
+    if ( $TestTag = "All")
+    {
+        $TestTag = $null
+    }
     #endregion
 
     #Validate all XML files in working directory.
@@ -340,6 +356,32 @@ try
         Throw "Auto created $xmlFile is not valid."    
     }
     
+    #endregion
+
+    #region Download necessary tools.
+    mkdir -Path .\tools -ErrorAction SilentlyContinue | Out-Null
+    Import-Module BitsTransfer  
+    if (!( Test-Path -Path .\tools\7za.exe ))
+    {
+        Write-Host "Downloading 7za.exe"
+        $out = Start-BitsTransfer -Source "https://github.com/iamshital/azure-linux-automation-support-files/raw/master/tools/7za.exe" | Out-Null
+    }
+    if (!( Test-Path -Path .\tools\dos2unix.exe ))
+    {
+        Write-Host "Downloading dos2unix.exe"
+        $out = Start-BitsTransfer -Source "https://github.com/iamshital/azure-linux-automation-support-files/raw/master/tools/dos2unix.exe" | Out-Null
+    }
+    if (!( Test-Path -Path .\tools\plink.exe ))
+    {
+        Write-Host "Downloading plink.exe"
+        $out = Start-BitsTransfer -Source "https://github.com/iamshital/azure-linux-automation-support-files/raw/master/tools/plink.exe" | Out-Null
+    }
+    if (!( Test-Path -Path .\tools\pscp.exe ))
+    {
+        Write-Host "Downloading pscp.exe"
+        $out = Start-BitsTransfer -Source "https://github.com/iamshital/azure-linux-automation-support-files/raw/master/tools/pscp.exe"  | Out-Null
+    }
+    Move-Item -Path "*.exe" -Destination .\tools -ErrorAction SilentlyContinue -Force
     #endregion
 
     LogMsg ".\AutomationManager.ps1 -xmlConfigFile $xmlFile -cycleName `"TC-$shortRandomNumber`" -RGIdentifier $RGIdentifier -runtests -UseAzureResourceManager"

@@ -37,7 +37,7 @@ function LogError ()
     {
         $text = $text.Replace('"','`"')
         $now = [Datetime]::Now.ToUniversalTime().ToString("MM/dd/yyyy HH:mm:ss")
-        Write-Error "$now : $text"
+        Write-Host "Error: $now : $text"
     }
     catch
     {
@@ -79,7 +79,7 @@ Function ValiateXMLs( [string]$ParentFolder )
         }
         catch
         {
-            LogErroror -text "$($file.FullName) validation failed."
+            LogError -text "$($file.FullName) validation failed."
             $xmlErrorFiles += $file.FullName
         }
     }
