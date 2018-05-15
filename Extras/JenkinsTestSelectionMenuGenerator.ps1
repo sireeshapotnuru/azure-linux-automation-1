@@ -113,7 +113,7 @@ foreach ( $platform in $Platforms )
             }
             foreach ( $region in $Regions)
             {
-                $tagsFile += "$platform`t$tag`t$region`n"
+                $tagsFile += "$platform`t$tag`t$platform>>$tag>>$region`n"
             }
         }
     }

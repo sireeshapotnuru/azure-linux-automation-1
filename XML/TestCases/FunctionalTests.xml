@@ -39,7 +39,7 @@
 		<TestID>Functional_GPU_003</TestID>
 	</test>
 	<test>
-		<testName>VERIFY-NVIDIA-CUDA-DRIVER-FOR-NC244-VM</testName>
+		<testName>VERIFY-NVIDIA-CUDA-DRIVER-FOR-NC24r-VM</testName>
 		<PowershellScript>ICA-N-Series-GPU-TEST.ps1</PowershellScript>
 		<setupType>SingleVM</setupType>
 		<OverrideVMSize>Standard_NC24r</OverrideVMSize>
