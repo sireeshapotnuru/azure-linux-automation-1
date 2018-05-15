@@ -1,0 +1,13 @@
+<TestCases>
+	<test>
+		<TestName>STRESS-CPU-KERNBENCH</TestName>
+		<PowershellScript>BVT-VERIFY-DEPLOYMENT-PROVISION.ps1</PowershellScript>
+		<files></files>
+		<setupType>SingleVM</setupType>
+		<Platform>Azure</Platform>
+		<Category>Stress</Category>
+		<Area>CPU</Area>
+		<Tags>cpu</Tags>
+		<TestID>Smoke_001</TestID>
+	</test>
+</TestCases>
