@@ -101,7 +101,7 @@ try
     {
         $TestNames = ""
     }
-    if ( $TestTag = "All")
+    if ( $TestTag -eq "All")
     {
         $TestTag = $null
     }
