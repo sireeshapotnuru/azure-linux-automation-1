@@ -7165,7 +7165,7 @@
 				<param>mpi_settings="-env I_MPI_FABRICS dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
 				<param>imb_mpi1_tests="pingpong allreduce"</param>
 				<param>mpi1_ppn=2</param>
-				<param>imb_mpi1_tests_iterations=500</param>
+				<param>imb_mpi1_tests_iterations=2000</param>
 				<param>imb_rma_tests="all"</param>
 				<param>rma_ppn=2</param>
 				<param>imb_rma_tests_iterations=1</param>
