@@ -409,8 +409,8 @@
 				<HostedService>
 					<VirtualMachine>
 						<state></state>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
-						<InstanceSize>Standard_G5</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
 						<!-- <InstanceSize>A9</InstanceSize>
 						<ARMInstanceSize>A9</ARMInstanceSize> -->
 						<EndPoints>
@@ -437,8 +437,8 @@
 					</VirtualMachine>
 					<VirtualMachine>
 						<state></state>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
-						<InstanceSize>Standard_G5</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
 						<!-- <InstanceSize>A9</InstanceSize>
 						<ARMInstanceSize>A9</ARMInstanceSize> -->
 						<EndPoints>
@@ -2370,8 +2370,8 @@
 				<HostedService>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<EndPoints>
 							<Name>SSH</Name>
 							<Protocol>tcp</Protocol>
@@ -3559,8 +3559,8 @@
 				<HostedService>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>server-vm</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3572,8 +3572,8 @@
 					</VirtualMachine>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>client-vm</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3928,8 +3928,8 @@
 				<HostedService>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>master</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3941,8 +3941,8 @@
 					</VirtualMachine>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>slave1</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3954,8 +3954,8 @@
 					</VirtualMachine>					
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>slave2</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3967,8 +3967,8 @@
 					</VirtualMachine>					
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>slave3</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3980,8 +3980,8 @@
 					</VirtualMachine>					
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>slave4</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -3993,8 +3993,8 @@
 					</VirtualMachine>					
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>slave5</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -4005,7 +4005,117 @@
 						<DataDisk></DataDisk>
 					</VirtualMachine>					
 				</HostedService>
-			</M1S5>	
+			</M1S5>
+			<EightVMs>
+				<!-- This setup type defines One Master and Three slave machines. Hence name is M(aster)1S(lave)3. -->
+				<isDeployed>NO</isDeployed>
+				<HostedService>
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-0</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1110</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>				
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-1</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1111</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-2</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1112</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-3</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1113</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-4</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1114</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-5</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1115</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-6</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1116</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>					
+					<VirtualMachine>
+						<state></state>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
+						<RoleName>role-7</RoleName>
+						<EndPoints>
+							<Name>SSH</Name>
+							<Protocol>tcp</Protocol>
+							<LocalPort>22</LocalPort>
+							<PublicPort>1117</PublicPort>
+						</EndPoints>
+						<DataDisk></DataDisk>
+					</VirtualMachine>										
+				</HostedService>
+			</EightVMs>				
 			<M1S15>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -4258,8 +4368,8 @@
 				<HostedService>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>Server1</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -4271,8 +4381,8 @@
 					</VirtualMachine>
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>Server2</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -4284,8 +4394,8 @@
 					</VirtualMachine>					
 					<VirtualMachine>
 						<state></state>
-						<InstanceSize>Standard_G5</InstanceSize>
-						<ARMInstanceSize>Standard_G5</ARMInstanceSize>
+						<InstanceSize>Standard_D1_v2</InstanceSize>
+						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
 						<RoleName>Client</RoleName>
 						<EndPoints>
 							<Name>SSH</Name>
@@ -4910,7 +5020,7 @@
 			<testScript></testScript>
 			<testScriptPs1>BVT-VERIFY-DEPLOYMENT-PROVISION.ps1</testScriptPs1>
 			<files></files>
-			<setupType>SingleVM</setupType>
+			<setupType>EightVMs</setupType>
 			<TestType></TestType>
 			<TestFeature></TestFeature>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
@@ -6768,7 +6878,7 @@
 			<TestFeature></TestFeature>
 			<SubtestValues>CUSTOM,VM,SIZES</SubtestValues>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
-			<StandardVMSizes>Standard_A0,Standard_E64_v3,Standard_A7,Standard_D64_v3,Basic_A0,Standard_E32_v3,Basic_A4,Standard_D32_v3,Standard_D1_v2,Standard_D15_v2,Standard_F1,Standard_A1_v2,Standard_F16,Standard_A8_v2,Standard_D1,Standard_D14,Standard_D2_v3,Standard_G5,Standard_E2_v3,Standard_G1,Standard_A8</StandardVMSizes>
+			<StandardVMSizes>Standard_A0,Standard_E64_v3,Standard_A7,Standard_D64_v3,Basic_A0,Standard_E32_v3,Basic_A4,Standard_D32_v3,Standard_D1_v2,Standard_D15_v2,Standard_F1,Standard_A1_v2,Standard_F16,Standard_A8_v2,Standard_D1,Standard_D14,Standard_D2_v3,Standard_D1_v2,Standard_E2_v3,Standard_G1,Standard_A8</StandardVMSizes>
 			<PremiumVMSizes>Standard_DS1_v2,Standard_E64s_v3,Standard_DS15_v2,Standard_F1s,Standard_D64s_v3,Standard_F16s,Standard_E32s_v3,Standard_DS1,Standard_DS14,Standard_B1ms,Standard_L32s,Standard_B8ms,Standard_D2s_v3,Standard_D32s_v3,Standard_E2s_v3,Standard_GS5,Standard_GS1,Standard_L4s</PremiumVMSizes>
 			<TestID>Reboot_01</TestID>
 		</test>
