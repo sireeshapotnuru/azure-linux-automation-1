@@ -7367,7 +7367,7 @@
 			<testName>ICA-RDMA-TEST-MultiVM</testName>
 			<testScript></testScript>
 			<testScriptps1>ICA-RDMA-TEST-MultiVM.ps1</testScriptps1>
-			<setupType>S1C15</setupType>
+			<setupType>S1C1</setupType>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
 			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
 			<remoteFiles></remoteFiles>
