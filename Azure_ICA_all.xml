@@ -7242,13 +7242,13 @@
 			<params>
 				<param>mpi_settings="-env I_MPI_FABRICS shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
 				<param>imb_mpi1_tests="all"</param>
-				<param>mpi1_ppn=16</param>
-				<param>imb_mpi1_tests_iterations=1</param>
+				<param>mpi1_ppn=2</param>
+				<param>imb_mpi1_tests_iterations=100</param>
 				<param>imb_rma_tests="all"</param>
-				<param>rma_ppn=16</param>
+				<param>rma_ppn=2</param>
 				<param>imb_rma_tests_iterations=1</param>
 				<param>imb_nbc_tests="all"</param>
-				<param>nbc_ppn=16</param>
+				<param>nbc_ppn=2</param>
 				<param>imb_nbc_tests_iterations=1</param>
 			</params>			
 		</test>
