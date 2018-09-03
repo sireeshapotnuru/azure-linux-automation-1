@@ -3585,7 +3585,7 @@
 					</VirtualMachine>					
 				</HostedService>
 			</M1S1>
-			<S1C15>
+			<S1C7>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
 					<VirtualMachine>
@@ -3691,113 +3691,9 @@
 							<PublicPort>1117</PublicPort>
 						</EndPoints>
 						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-8</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1118</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-9</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1119</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-10</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1120</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-11</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1121</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-12</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1122</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-13</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1123</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-14</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1124</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
-					</VirtualMachine>					
-					<VirtualMachine>
-						<state></state>
-						<InstanceSize>Standard_D1_v2</InstanceSize>
-						<ARMInstanceSize>Standard_D1_v2</ARMInstanceSize>
-						<RoleName>client-vm-15</RoleName>
-						<EndPoints>
-							<Name>SSH</Name>
-							<Protocol>tcp</Protocol>
-							<LocalPort>22</LocalPort>
-							<PublicPort>1125</PublicPort>
-						</EndPoints>
-						<DataDisk></DataDisk>
 					</VirtualMachine>
 				</HostedService>					
-			</S1C15>						
+			</S1C7>						
 			<RDMA2VMA8>
 				<isDeployed>NO</isDeployed>
 				<HostedService>
@@ -7336,23 +7232,23 @@
 			<testName>ICA-RDMA-TEST-MultiVM</testName>
 			<testScript></testScript>
 			<testScriptps1>ICA-RDMA-TEST-MultiVM.ps1</testScriptps1>
-			<setupType>S1C15</setupType>
+			<setupType>S1C7</setupType>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
 			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
 			<remoteFiles></remoteFiles>
 			<InitialWaitSeconds>60</InitialWaitSeconds>
 			<Priority>P0</Priority>
-			<NumberOfReboots>5</NumberOfReboots>
+			<NumberOfReboots>1</NumberOfReboots>
 			<params>
-				<param>mpi_settings="-env I_MPI_FABRICS dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
-				<param>imb_mpi1_tests="pingpong allreduce"</param>
-				<param>mpi1_ppn=2</param>
-				<param>imb_mpi1_tests_iterations=10</param>
+				<param>mpi_settings="-env I_MPI_FABRICS shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
+				<param>imb_mpi1_tests="all"</param>
+				<param>mpi1_ppn=16</param>
+				<param>imb_mpi1_tests_iterations=1</param>
 				<param>imb_rma_tests="all"</param>
-				<param>rma_ppn=2</param>
+				<param>rma_ppn=16</param>
 				<param>imb_rma_tests_iterations=1</param>
 				<param>imb_nbc_tests="all"</param>
-				<param>nbc_ppn=2</param>
+				<param>nbc_ppn=16</param>
 				<param>imb_nbc_tests_iterations=1</param>
 			</params>			
 		</test>
@@ -7360,7 +7256,7 @@
 			<testName>ICA-RDMA-TEST-MultiVM-REBOOT-STRESS</testName>
 			<testScript></testScript>
 			<testScriptps1>ICA-RDMA-TEST-MultiVM.ps1</testScriptps1>
-			<setupType>S1C15</setupType>
+			<setupType>S1C7</setupType>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
 			<SubtestValues>SOME,TEXTS,NEEDS,TO,BE,PRESENT,HERE,FOR,PRINTING,TEST,SUMMARY</SubtestValues>
 			<remoteFiles></remoteFiles>
@@ -7368,15 +7264,15 @@
 			<Priority>P0</Priority>
 			<NumberOfReboots>1000</NumberOfReboots>
 			<params>
-				<param>mpi_settings="-env I_MPI_FABRICS dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
-				<param>imb_mpi1_tests="pingpong allreduce"</param>
-				<param>mpi1_ppn=3</param>
-				<param>imb_mpi1_tests_iterations=5</param>
+				<param>mpi_settings="-env I_MPI_FABRICS shm:dapl -env I_MPI_DAPL_PROVIDER=ofa-v2-ib0 -env SECS_PER_SAMPLE=600"</param>
+				<param>imb_mpi1_tests="pingpong"</param>
+				<param>mpi1_ppn=16</param>
+				<param>imb_mpi1_tests_iterations=1</param>
 				<param>imb_rma_tests="all"</param>
-				<param>rma_ppn=2</param>
+				<param>rma_ppn=16</param>
 				<param>imb_rma_tests_iterations=0</param>
 				<param>imb_nbc_tests="all"</param>
-				<param>nbc_ppn=2</param>
+				<param>nbc_ppn=16</param>
 				<param>imb_nbc_tests_iterations=0</param>
 			</params>
 		</test>

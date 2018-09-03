@@ -165,11 +165,12 @@ fi
 #Verify PingPong Tests (IntraNode).
 finalMpiIntranodeStatus=0
 slavesArr=`echo ${slaves} | tr ',' ' '`
+newMPI=$(echo $mpi_settings | sed 's/shm://')
 for vm in $master $slavesArr
 do
-                LogMsg "$mpirunPath -hosts $vm -ppn $mpi1_ppn -n $mpi1_ppn $mpi_settings $imb_mpi1Path pingpong"
+                LogMsg "$mpirunPath -hosts $vm -ppn 2 -n 2 $newMPI $imb_mpi1Path pingpong"
                 LogMsg "Checking IMB-MPI1 Intranode status in $vm"
-                ssh root@${vm} "$mpirunPath -hosts $vm -ppn $mpi1_ppn -n $mpi1_ppn $mpi_settings $imb_mpi1Path pingpong > IMB-MPI1-IntraNode-pingpong-output-$vm.txt"
+                ssh root@${vm} "$mpirunPath -hosts $vm -ppn 2 -n 2 $newMPI $imb_mpi1Path pingpong > IMB-MPI1-IntraNode-pingpong-output-$vm.txt"
                 mpiIntranodeStatus=$?
                 scp root@${vm}:IMB-MPI1-IntraNode-pingpong-output-$vm.txt .
                 if [ $mpiIntranodeStatus -eq 0 ];
@@ -194,11 +195,12 @@ fi
 #Verify PingPong Tests (InterNode).
 finalMpiInternodeStatus=0
 slavesArr=`echo ${slaves} | tr ',' ' '`
+newMPI=$(echo $mpi_settings | sed 's/shm://')
 for vm in $slavesArr
 do
-        LogMsg "$mpirunPath -hosts $master,$vm -ppn $mpi1_ppn -n $(( $mpi1_ppn * 2 )) $mpi_settings $imb_mpi1Path pingpong"
+        LogMsg "$mpirunPath -hosts $master,$vm -ppn 1 -n 2 $newMPI $imb_mpi1Path pingpong"
         LogMsg "Checking IMB-MPI1 InterNode status in $vm"
-        $mpirunPath -hosts $master,$vm -ppn $mpi1_ppn -n $(( $mpi1_ppn * 2 )) $mpi_settings $imb_mpi1Path pingpong > IMB-MPI1-InterNode-pingpong-output-${master}-${vm}.txt
+        $mpirunPath -hosts $master,$vm -ppn 1 -n 2 $newMPI $imb_mpi1Path pingpong > IMB-MPI1-InterNode-pingpong-output-${master}-${vm}.txt
         mpiInternodeStatus=$?
         if [ $mpiInternodeStatus -eq 0 ];
         then
