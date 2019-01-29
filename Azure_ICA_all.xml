@@ -6768,8 +6768,8 @@
 			<TestFeature></TestFeature>
 			<SubtestValues>CUSTOM,VM,SIZES</SubtestValues>
 			<SupportedExecutionModes>AzureServiceManagement,AzureResourceManager</SupportedExecutionModes>
-            <StandardVMSizes>Standard_D12_v2</StandardVMSizes>
-			<PremiumVMSizes>Standard_F72s_v2</PremiumVMSizes>
+            <StandardVMSizes>Standard_E64i_v3,Standard_E64_v3</StandardVMSizes>
+			<PremiumVMSizes>Standard_F8s,Standard_F16s,Standard_D2s_v3,Standard_D4s_v3,Standard_D8s_v3,Standard_D16s_v3,Standard_D32s_v3,Standard_D64s_v3,Standard_E2s_v3,Standard_E4-2s_v3,Standard_E4s_v3,Standard_E8-2s_v3,Standard_E8-4s_v3,Standard_E8s_v3,Standard_E16-4s_v3,Standard_E16-8s_v3,Standard_E16s_v3,Standard_E20s_v3,Standard_E32-8s_v3,Standard_E32-16s_v3,Standard_E32s_v3,Standard_E64-16s_v3,Standard_E64-32s_v3,Standard_E64is_v3,Standard_E64s_v3</PremiumVMSizes>
 			<TestID>Reboot_01</TestID>
 		</test>
 
