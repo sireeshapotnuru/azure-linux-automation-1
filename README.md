@@ -1,3 +1,5 @@
+This repository is deprecated, we're migrating to https://github.com/LIS/LISAv2.
+
 # azure-linux-automation
 Automation tools for testing Linux images on Microsoft Azure
 ## Overview
